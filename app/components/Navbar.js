@@ -8,7 +8,7 @@ const Navbar = () => {
           <Link href="/" className="text-white hover:text-yellow-400 transition-all duration-300 ease-in-out">
             Home
           </Link>
-          <Link href="/add-manage-parcels" className="text-white hover:text-yellow-400 transition-all duration-300 ease-in-out">
+          <Link href="/AdminAddParcel" className="text-white hover:text-yellow-400 transition-all duration-300 ease-in-out">
             Add/Manage Parcels
           </Link>
           <Link href="/view-routes" className="text-white hover:text-yellow-400 transition-all duration-300 ease-in-out">
