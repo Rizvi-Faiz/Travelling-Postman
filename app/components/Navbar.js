@@ -12,7 +12,7 @@ const Navbar = () => {
             Add/Manage Parcels
           </Link>
           <Link href="/view-routes" className="text-white hover:text-yellow-400 transition-all duration-300 ease-in-out">
-            View Routes
+            View Delivery Stats
           </Link>
           <Link href="/track-shipments" className="text-white hover:text-yellow-400 transition-all duration-300 ease-in-out">
             Track Shipments
