@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import Header from "../components/Header"; 
-import Footer from "../components/Footer"; 
-import { useRouter } from "next/navigation"; 
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { useRouter } from "next/navigation";
 export default function Login() {
   const [role, setRole] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const router = useRouter(); 
+  const router = useRouter();
 
   const handleLogin = async () => {
     try {
@@ -18,14 +18,20 @@ export default function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password,role }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         localStorage.setItem('token', data.token);
-        router.push('/Userdashboard');
+        localStorage.setItem('username', data.username); // Store username
+        localStorage.setItem('role', role); // Store role
+
+        // Redirect based on role
+        if (role === "User") router.push('/Userdashboard');
+        else if (role === "Admin") router.push('/Admindashboard');
+        else if (role === "Dispatcher") router.push('/Dispatcherdashboard');
       } else {
         alert(data.error);
       }
@@ -36,12 +42,12 @@ export default function Login() {
   };
 
   const navigateToSignUp = () => {
-    router.push("/SignUp"); 
+    router.push("/SignUp");
   };
 
   return (
     <div className="bg-white flex flex-col items-center justify-between min-h-screen">
-      <Header /> 
+      <Header />
 
       <div className="w-full max-w-md bg-opacity-60 bg-white p-8 rounded-xl shadow-lg mb-6">
         <div className="mb-6">
@@ -106,7 +112,7 @@ export default function Login() {
         </div>
       </div>
 
-      <Footer /> 
+      <Footer />
     </div>
   );
 }
