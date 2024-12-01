@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Logo from "/public/Logo.png";
+import Navbar from "./Navbar";
 
 const Header = () => {
   return (
@@ -15,6 +16,7 @@ const Header = () => {
         </h1>
       </div>
       <div className="bg-red-700 top-1 h-4 w-screen"></div> 
+      {/* <Navbar /> */}
     </div>
   );
 };
