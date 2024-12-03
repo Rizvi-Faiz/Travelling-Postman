@@ -22,7 +22,7 @@ export default function Login() {
       });
 
       const data = await response.json();
-
+      console.log('API Response:', data); // Debugging
       if (response.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', data.username); // Store username

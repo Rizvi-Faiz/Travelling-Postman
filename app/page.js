@@ -1,6 +1,7 @@
 "use client"
 import React from "react";
 import { useRouter } from "next/navigation"; 
+import IndiaMap from "./components/IndiaMap";
 
 function HomePage() {
   const router = useRouter(); 
@@ -34,6 +35,7 @@ function HomePage() {
         >
           Go to Sign Up
         </button>
+        {/* <IndiaMap /> */}
       </div>
     </div>
   );

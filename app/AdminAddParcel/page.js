@@ -1,8 +1,10 @@
+"use client"
 import React from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import withAuth from "@/lib/withAuth";
+import IndiaMap from "../components/IndiaMap";
 
 const AdminAddParcel = () => {
   const currentDate = new Date().toISOString().split("T")[0];
@@ -66,9 +68,7 @@ const AdminAddParcel = () => {
       <main className="flex-grow container mx-auto px-4 py-6 grid grid-cols-2 gap-4">
         <div>
           <h2 className="font-bold mb-2">Route Map</h2>
-          <div className="w-full h-48 border rounded bg-gray-200 flex items-center justify-center">
-            <span>Map Placeholder</span>
-          </div>
+          <IndiaMap />
         </div>
         <div className="space-y-4">
           <div>
