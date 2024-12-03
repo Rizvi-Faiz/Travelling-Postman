@@ -75,7 +75,9 @@ const AdminDashboard = () => {
             {
                 label: 'Delay in Days',
                 data: delayData ? delayData.map(item => item.delay) : [],
-                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                backgroundColor: 'rgba(54, 162, 235, 0.8)', // Light blue background color for bars
+                borderColor: 'rgba(54, 162, 235, 1)', // Blue border color for bars
+                borderWidth: 1,
             },
         ],
     };
@@ -95,6 +97,27 @@ const AdminDashboard = () => {
                         title: {
                             display: true,
                             text: 'Dispatcher Delay Chart',
+                            font: {
+                                size: 18,
+                            },
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 14,
+                            },
+                            bodyFont: {
+                                size: 12,
+                            },
+                        },
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
                         },
                     },
                 },
@@ -103,7 +126,7 @@ const AdminDashboard = () => {
     }, [delayData]);
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-gray-100">
             {/* Fixed Header and Navbar */}
             <header className="relative bg-white shadow-md">
                 <div className="flex items-center justify-center px-8 py-4 relative">
@@ -125,7 +148,7 @@ const AdminDashboard = () => {
             {/* Content Section */}
             <div className="flex-grow flex gap-6 px-8 py-4 overflow-auto">
                 {/* Left Section: Chart */}
-                <div className="flex-1 bg-white shadow-md rounded-lg p-6">
+                <div className="flex-1 bg-white shadow-xl rounded-lg p-6">
                     {/* Input to find delay for a dispatcher */}
                     <div className="mb-4">
                         <input
@@ -133,9 +156,9 @@ const AdminDashboard = () => {
                             placeholder="Enter Dispatcher ID (e.g., D5)"
                             value={inputId}
                             onChange={(e) => setInputId(e.target.value)}
-                            className="border p-2 rounded"
+                            className="border p-3 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-red-600"
                         />
-                        <button onClick={handleDispatcherInput} className="ml-2 bg-red-600 text-white px-4 py-2 rounded">
+                        <button onClick={handleDispatcherInput} className="ml-2 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
                             Get Delay
                         </button>
                     </div>
@@ -147,19 +170,29 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Right Section: Stats */}
-                <div className="flex-1 flex flex-col gap-6">
-                    {/* Stats Section */}
-                    <div className="bg-white shadow-md rounded-lg p-4 text-center">
-                        <h3 className="text-2xl font-semibold">Total Deliveries Completed</h3>
+                <div className="flex-1 grid grid-cols-2 gap-6">
+                    {/* Card 1: Total Deliveries Completed */}
+                    <div className="bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
+                        <h3 className="text-2xl font-semibold text-gray-700">Total Deliveries Completed</h3>
                         <p className="text-4xl font-bold text-green-600">4357</p>
                     </div>
-                    <div className="bg-white shadow-md rounded-lg p-4 text-center">
-                        <h3 className="text-2xl font-semibold">Pending Deliveries</h3>
+                    
+                    {/* Card 2: Pending Deliveries */}
+                    <div className="bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
+                        <h3 className="text-2xl font-semibold text-gray-700">Pending Deliveries</h3>
                         <p className="text-4xl font-bold text-red-600">870</p>
                     </div>
-                    <div className="bg-white shadow-md rounded-lg p-4 text-center">
-                        <h3 className="text-2xl font-semibold">Average Delivery Time</h3>
+                    
+                    {/* Card 3: Average Delivery Time */}
+                    <div className="bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
+                        <h3 className="text-2xl font-semibold text-gray-700">Average Delivery Time</h3>
                         <p className="text-4xl font-bold text-purple-600">35 hours/order</p>
+                    </div>
+
+                    {/* Card 4: New Dispatchers */}
+                    <div className="bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
+                        <h3 className="text-2xl font-semibold text-gray-700">New Dispatchers</h3>
+                        <p className="text-4xl font-bold text-blue-600">12</p>
                     </div>
                 </div>
             </div>

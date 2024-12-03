@@ -18,12 +18,12 @@ const Navbar = () => {
           >
             Add/Manage Parcels
           </Link>
-          <Link
+          {/* <Link
             href="/view-routes"
             className="text-white hover:text-yellow-400 transition-all duration-300 ease-in-out"
           >
             View Routes
-          </Link>
+          </Link> */}
           <Link
             href="/track-shipments"
             className="text-white hover:text-yellow-400 transition-all duration-300 ease-in-out"
@@ -31,10 +31,10 @@ const Navbar = () => {
             Track Shipments
           </Link>
           <Link
-            href="/reports"
+            href="/AdminPerformanceDashboard"
             className="text-white hover:text-yellow-400 transition-all duration-300 ease-in-out"
           >
-            Reports
+            Performance Dashboard
           </Link>
         </div>
 

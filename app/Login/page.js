@@ -31,7 +31,7 @@ export default function Login() {
         // Redirect based on role
         if (role === "User") router.push('/Userdashboard');
         else if (role === "Admin") router.push('/Admindashboard');
-        else if (role === "Dispatcher") router.push('/Dispatcherdashboard');
+        else if (role === "Dispatcher") router.push('/DispatcherDashboard');
       } else {
         alert(data.error);
       }

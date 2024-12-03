@@ -7,7 +7,6 @@ import Logo from "/public/Logo.png";
 import Image from "next/image";
 
 const AdminAddParcel = () => {
-  const currentDate = new Date().toISOString().split("T")[0];
   const [username, setUsername] = useState("");
   const [orderId, setOrderId] = useState(""); // State for order ID input
   const [orderDetails, setOrderDetails] = useState(null); // State for order details
@@ -87,9 +86,8 @@ const AdminAddParcel = () => {
               />
               <select className="w-full border rounded px-3 py-2">
                 <option>Preference</option>
-                <option>Roadways</option>
-                <option>Railways</option>
-                <option>Airways</option>
+                <option>Time</option>
+                <option>Cost</option>
               </select>
             </div>
 
