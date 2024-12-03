@@ -114,7 +114,7 @@ const AdminDashboard = () => {
 
                     {/* Welcome Message */}
                     <h1 className="text-4xl font-bold text-red-700 text-center">
-                        Welcome {username}
+                        Welcome {username} !
                     </h1>
                 </div>
                 {/* Red Bar Below Header */}
