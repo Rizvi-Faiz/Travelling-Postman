@@ -28,10 +28,9 @@
 2. Add the following environment variables to the `.env` file:
 
    ```env
-   DB_USER=
-   DB_PASSWORD=
-   DB_NAME=
-   JWT_SECRET=
+   DB_NAME =
+   JWT_SECRET =
+   DATABASE_URL =
    ```
 ---
 
