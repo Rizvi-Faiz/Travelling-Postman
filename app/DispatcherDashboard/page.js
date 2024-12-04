@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Logo from "/public/Logo.png";
 import withAuth from "@/lib/withAuth";
-import DispatcherNavbar from "../components/dispatcherNavbar";
+import DispatcherNavbar from "../components/DispatcherNavbar";
 
 const DispatcherDashboard = () => {
     const [username, setUsername] = useState("");
