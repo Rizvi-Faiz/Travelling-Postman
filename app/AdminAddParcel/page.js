@@ -8,22 +8,20 @@ import Image from "next/image";
 
 const AdminAddParcel = () => {
   const [username, setUsername] = useState("");
-  const [orderId, setOrderId] = useState(""); // State for order ID input
-  const [orderDetails, setOrderDetails] = useState(null); // State for order details
+  const [orderId, setOrderId] = useState("");
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [calculatedCost, setCalculatedCost] = useState(null);
 
   useEffect(() => {
-    // Retrieve the username from localStorage
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
       setUsername(storedUsername);
     } else {
-      // Default to "Admin" if username is not available
       setUsername("Admin");
     }
   }, []);
 
   const handleOrderSearch = () => {
-    // Simulated order data for demo purposes
     const orderData = {
       orderId,
       currentLocation: "Mumbai",
@@ -31,8 +29,12 @@ const AdminAddParcel = () => {
       eta: "2 Days",
       contact: "+91 98765 43210",
     };
-
     setOrderDetails(orderData);
+  };
+
+  const calculateCost = () => {
+    const cost = Math.floor(Math.random() * 1000) + 100; // Random cost between 100 and 1100
+    setCalculatedCost(cost);
   };
 
   return (
@@ -40,12 +42,11 @@ const AdminAddParcel = () => {
       {/* Fixed Header and Navbar */}
       <header className="relative bg-white shadow-md">
         <div className="flex items-center justify-center px-8 py-4 relative">
-          {/* Logo */}
           <div className="absolute left-4">
             <Image src={Logo} alt="Postman Logo" width={120} height={120} />
           </div>
           <h1 className="text-4xl font-bold text-red-700 text-center">
-            Welcome {username} !
+            Welcome {username}!
           </h1>
         </div>
         <div className="bg-red-700 h-4 w-full"></div>
@@ -61,12 +62,6 @@ const AdminAddParcel = () => {
             {/* Sender Details */}
             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
               <div className="flex items-center space-x-4 mb-4">
-                {/* <Image
-                  src="https://cdn-icons-png.flaticon.com/512/4066/4066067.png"
-                  alt="Sender"
-                  width={50}
-                  height={50}
-                /> */}
                 <h3 className="font-semibold text-lg">Sender Details</h3>
               </div>
               <input
@@ -84,7 +79,19 @@ const AdminAddParcel = () => {
                 className="w-full border rounded px-3 py-2 mb-2"
                 placeholder="Address"
               />
-              <select className="w-full border rounded px-3 py-2">
+              <div className="flex space-x-4">
+                <input
+                  type="text"
+                  className="w-1/2 border rounded px-3 py-2"
+                  placeholder="Weight (kg)"
+                />
+                <input
+                  type="text"
+                  className="w-1/2 border rounded px-3 py-2"
+                  placeholder="Dimensions (LxWxH cm)"
+                />
+              </div>
+              <select className="w-full border rounded px-3 py-2 mt-2">
                 <option>Preference</option>
                 <option>Time</option>
                 <option>Cost</option>
@@ -94,12 +101,6 @@ const AdminAddParcel = () => {
             {/* Receiver Details */}
             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
               <div className="flex items-center space-x-4 mb-4">
-                {/* <Image
-                  src="https://cdn-icons-png.flaticon.com/512/2922/2922510.png"
-                  alt="Receiver"
-                  width={50}
-                  height={50}
-                /> */}
                 <h3 className="font-semibold text-lg">Receiver Details</h3>
               </div>
               <input
@@ -119,9 +120,24 @@ const AdminAddParcel = () => {
               />
             </div>
           </div>
-          <button className="bg-green-600 text-white px-4 py-2 mt-6 rounded hover:bg-green-700 transition-colors w-full">
-            Add Parcel
-          </button>
+          <div className="flex items-center justify-between mt-6">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={calculateCost}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+              >
+                Calculate Cost
+              </button>
+              {calculatedCost !== null && (
+                <span className="text-green-600 font-bold">
+                  ₹{calculatedCost}
+                </span>
+              )}
+            </div>
+            <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+              Add Parcel
+            </button>
+          </div>
         </div>
 
         {/* Right Section */}
