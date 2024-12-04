@@ -35,6 +35,10 @@ const AdminAddParcel = () => {
     setOrderDetails(orderData);
   };
 
+  const addparcel=()=>{
+    alert("Parcel added successfully");
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
       {/* Fixed Header and Navbar */}
@@ -119,7 +123,7 @@ const AdminAddParcel = () => {
               />
             </div>
           </div>
-          <button className="bg-green-600 text-white px-4 py-2 mt-6 rounded hover:bg-green-700 transition-colors w-full">
+          <button className="bg-green-600 text-white px-4 py-2 mt-6 rounded hover:bg-green-700 transition-colors w-full" onClick={addparcel}>
             Add Parcel
           </button>
         </div>

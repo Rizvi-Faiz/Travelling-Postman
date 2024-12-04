@@ -5,17 +5,30 @@ import Navbar from "../components/Navbar";
 import withAuth from "@/lib/withAuth";
 import Logo from "/public/Logo.png";
 import Image from "next/image";
+// import {
+//   Chart as ChartJS,
+//   CategoryScale,
+//   LinearScale,
+//   BarElement,
+//   Title,
+//   Tooltip,
+//   Legend,
+// } from "chart.js";
+
+// ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 import {
   Chart as ChartJS,
+  BarController,
+  BarElement,
   CategoryScale,
   LinearScale,
-  BarElement,
   Title,
   Tooltip,
-  Legend,
-} from "chart.js";
+  Legend
+} from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+// Register the required components
+ChartJS.register(BarController, BarElement, CategoryScale, LinearScale, Title, Tooltip,Legend);
 
 const AdminPerformanceDashboard = () => {
   const [username, setUsername] = useState("");
