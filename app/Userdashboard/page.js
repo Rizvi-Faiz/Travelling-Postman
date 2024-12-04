@@ -11,19 +11,25 @@ const UserDashboard = () => {
     const [trackingId, setTrackingId] = useState('');
     const [idEnter, setIdEnter] = useState(false);
     const router = useRouter();
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const res = await fetch('/api/user');
-                const data = await res.json();
-                setUser(data);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        };
+    const role = typeof window !== "undefined" ? localStorage.getItem("role") : null; // Ensure localStorage is accessed on the client
 
-        fetchUser();
-    }, []);
+    useEffect(() => {
+        if (role !== "User") {
+            router.push("/Login"); // Redirect if not a user
+        } else {
+            const fetchUser = async () => {
+                try {
+                    const res = await fetch('/api/user');
+                    const data = await res.json();
+                    setUser(data);
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            };
+
+            fetchUser();
+        }
+    }, [role, router]);
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
@@ -174,6 +180,7 @@ const UserDashboard = () => {
         //     </main>
         //     <Footer />
         // </div>
+       
         <div className=" bg-gray-100">
             <div className="relative">
                 <div className="flex items-center justify-between mt-8 mb-4 px-7">
@@ -228,7 +235,7 @@ const UserDashboard = () => {
                                 <h2 className="text-xl font-semibold mb-4">
                                     Consignment Number: <span className="font-bold">{trackingId}</span>
                                 </h2>
-
+                                <h3 className="text-lg font-semibold mb-2">Consignment Details</h3>
                                 {/* Progress Tracker */}
                                 <div className="mb-6">
                                     <div className="flex justify-between items-center text-sm font-medium">
@@ -272,7 +279,7 @@ const UserDashboard = () => {
 
                                 {/* Consignment Details */}
                                 <div className="mb-4">
-                                    <h3 className="text-lg font-semibold mb-2">Consignment Details</h3>
+                                    
                                     <div className="mb-2">
                                         <label className="block text-sm font-medium mb-1">Expected Date of Arrival:</label>
                                         <p className="text-gray-800">13 December, 2024 <span className="text-gray-500">before 10pm</span></p>
@@ -347,7 +354,8 @@ const UserDashboard = () => {
             </main>
             <Footer />
         </div>
-    );
+       
+    ) 
 };
 
 export default UserDashboard;

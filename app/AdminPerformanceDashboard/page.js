@@ -26,16 +26,17 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import { useRouter } from "next/navigation";
 
 // Register the required components
-ChartJS.register(BarController, BarElement, CategoryScale, LinearScale, Title, Tooltip,Legend);
+ChartJS.register(BarController, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
 const AdminPerformanceDashboard = () => {
   const [username, setUsername] = useState("");
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
   const [randomData, setRandomData] = useState([]);
-  
+const route=useRouter();
   // Function to generate random dispatcher data
   const generateRandomData = () => {
     let data = [];
@@ -50,9 +51,14 @@ const AdminPerformanceDashboard = () => {
   };
 
   useEffect(() => {
+    // Retrieve the username from localStorage
     const storedUsername = localStorage.getItem("username");
-    setUsername(storedUsername || "Admin");
-
+    const storedRole = localStorage.getItem("role");
+    if (storedRole === "Admin" && storedUsername) {
+      setUsername(storedUsername);
+    } else {
+      route.push("/Login");
+    }
     // Generate and sort random data
     let data = generateRandomData();
     data = data.sort((a, b) => b.delay - a.delay); // Sort by delay in descending order

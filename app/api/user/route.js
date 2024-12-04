@@ -1,6 +1,6 @@
 import db from '../../../lib/db';
 
-export async function GET(req) {
+export  async function GET(req) {
     try {
         const query = 'SELECT id, name, username, email FROM users WHERE username = $1';
         const values = ['exampleUser']; 

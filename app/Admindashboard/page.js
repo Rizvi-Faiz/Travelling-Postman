@@ -5,6 +5,7 @@ import Logo from "/public/Logo.png";
 import Navbar from "../components/Navbar";
 import withAuth from "@/lib/withAuth";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, BarController } from "chart.js";
+import { useRouter } from "next/navigation";
 
 // Register chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, BarController);
@@ -14,19 +15,19 @@ const AdminDashboard = () => {
     const [delayData, setDelayData] = useState(null);
     const [inputId, setInputId] = useState("");
     const chartRef = useRef(null); // Create a reference for the chart
-
+    const router = useRouter();
     useEffect(() => {
         // Retrieve the username from localStorage
         const storedUsername = localStorage.getItem("username");
-        if (storedUsername) {
+        const storedRole = localStorage.getItem("role");
+        if (storedRole === "Admin" && storedUsername) {
             setUsername(storedUsername);
+            generateRandomData();
         } else {
-            // Default to "Admin" if username is not available
-            setUsername("Admin");
+            router.push("/Login");
         }
 
         // Generate random data for dispatcher delays
-        generateRandomData();
     }, []);
 
     // Generate random dispatcher data (100 values)
@@ -176,13 +177,13 @@ const AdminDashboard = () => {
                         <h3 className="text-2xl font-semibold text-gray-700">Total Deliveries Completed</h3>
                         <p className="text-4xl font-bold text-green-600">4357</p>
                     </div>
-                    
+
                     {/* Card 2: Pending Deliveries */}
                     <div className="bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
                         <h3 className="text-2xl font-semibold text-gray-700">Pending Deliveries</h3>
                         <p className="text-4xl font-bold text-red-600">870</p>
                     </div>
-                    
+
                     {/* Card 3: Average Delivery Time */}
                     <div className="bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
                         <h3 className="text-2xl font-semibold text-gray-700">Average Delivery Time</h3>

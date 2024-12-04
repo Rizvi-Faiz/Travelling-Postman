@@ -10,9 +10,18 @@ const DispatcherDashboard = () => {
 
     useEffect(() => {
         const storedUsername = localStorage.getItem("username");
-        setUsername(storedUsername || "Dispatcher");
+        const role = localStorage.getItem("role");
+        if(role ==="Dispatcher") {
+        setUsername(storedUsername );
+        }
+        else{
+            // alert("Unauthorized Access! Please login as a dispatcher.");
+            window.location.href = "/Login";
+        }
     }, []);
 
+
+    
     const orderData = [
         { orderId: "ORD001", src: "Mumbai", dest: "Delhi", dispatchDate: "2024-11-25", deliveryDate: "2024-11-27", delivered: true, delay: 2 },
         { orderId: "ORD002", src: "Chennai", dest: "Kolkata", dispatchDate: "2024-11-22", deliveryDate: "2024-11-24", delivered: true, delay: 2 },
