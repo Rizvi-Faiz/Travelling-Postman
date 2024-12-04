@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="text-sm text-center w-full mt-12 pb-6 mb-0">
+    <footer className="text-sm text-center w-full mb-0">
       <div className="mb-4">
         {/* <p>Contact Us</p> */}
         <p>Contact Us: +91 (719) 581-7902  || abc@gmail.com</p>

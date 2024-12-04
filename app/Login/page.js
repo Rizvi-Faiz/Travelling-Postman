@@ -8,7 +8,7 @@ export default function Login() {
   const [role, setRole] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  
+
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -49,7 +49,7 @@ export default function Login() {
     <div className="bg-white flex flex-col items-center justify-between min-h-screen">
       <Header />
 
-      <div className="w-full max-w-md bg-opacity-60 bg-white p-8 rounded-xl shadow-lg mb-6">
+      <div className="w-full max-w-md bg-opacity-60 bg-white p-8 rounded-xl shadow-lg mt-4">
         <div className="mb-6">
           <label htmlFor="role" className="block text-lg mb-2 font-semibold">
             Choose Role

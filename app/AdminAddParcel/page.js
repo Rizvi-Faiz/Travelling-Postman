@@ -38,10 +38,10 @@ const AdminAddParcel = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className=" flex flex-col bg-gray-100">
       {/* Fixed Header and Navbar */}
-      <header className="relative bg-white shadow-md">
-        <div className="flex items-center justify-center px-8 py-4 relative">
+      <header className="relative bg-white ">
+        <div className="flex items-center justify-center px-8 py-8 relative">
           <div className="absolute left-4">
             <Image src={Logo} alt="Postman Logo" width={120} height={120} />
           </div>
@@ -49,7 +49,7 @@ const AdminAddParcel = () => {
             Welcome {username}!
           </h1>
         </div>
-        <div className="bg-red-700 h-4 w-full"></div>
+        {/* <div className="bg-red-700 h-4 w-full"></div> */}
       </header>
       <Navbar />
 
