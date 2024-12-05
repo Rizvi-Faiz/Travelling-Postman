@@ -13,11 +13,21 @@ export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
 
   const router = useRouter();
 
   const handleSignUp = async () => {
     try {
+      const additionalFields =
+        role === "User"
+          ? { address }
+          : role === "Dispatcher"
+          ? { location: [latitude, longitude] }
+          : {};
+
       const response = await fetch("/api/signup", {
         method: "POST",
         headers: {
@@ -30,6 +40,7 @@ export default function SignUp() {
           phone,
           username,
           password,
+          ...additionalFields,
         }),
       });
 
@@ -116,6 +127,54 @@ export default function SignUp() {
             className="border border-gray-300 rounded px-4 py-2 w-full"
           />
         </div>
+
+        {role === "User" && (
+          <div className="mb-6">
+            <label htmlFor="address" className="block text-lg mb-2 font-semibold">
+              Address
+            </label>
+            <input
+              id="address"
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Enter your address"
+              className="border border-gray-300 rounded px-4 py-2 w-full"
+            />
+          </div>
+        )}
+
+        {role === "Dispatcher" && (
+          <>
+            <div className="mb-6">
+              <label htmlFor="latitude" className="block text-lg mb-2 font-semibold">
+                Latitude
+              </label>
+              <input
+                id="latitude"
+                type="text"
+                value={latitude}
+                onChange={(e) => setLatitude(e.target.value)}
+                placeholder="Enter latitude"
+                className="border border-gray-300 rounded px-4 py-2 w-full"
+              />
+            </div>
+
+            <div className="mb-6">
+              <label htmlFor="longitude" className="block text-lg mb-2 font-semibold">
+                Longitude
+              </label>
+              <input
+                id="longitude"
+                type="text"
+                value={longitude}
+                onChange={(e) => setLongitude(e.target.value)}
+                placeholder="Enter longitude"
+                className="border border-gray-300 rounded px-4 py-2 w-full"
+              />
+            </div>
+          </>
+        )}
 
         <div className="mb-6">
           <label

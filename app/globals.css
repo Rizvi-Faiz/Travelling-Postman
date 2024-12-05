@@ -35,3 +35,20 @@ footer {
   margin-top: auto; 
 }
 
+
+/* Add this to your global CSS or component-specific CSS file */
+.map-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Prevent overflow */
+  position: relative;
+}
+
+.map-container svg {
+  max-width: 100%; /* Make the map responsive */
+  max-height: 100%; /* Prevent it from exceeding container height */
+  object-fit: contain; /* Maintain aspect ratio */
+}
