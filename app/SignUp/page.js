@@ -12,7 +12,7 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [contact, setContact] = useState("");  // Changed from 'phone' to 'contact'
   const [address, setAddress] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
@@ -20,12 +20,18 @@ export default function SignUp() {
   const router = useRouter();
 
   const handleSignUp = async () => {
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
     try {
       const additionalFields =
         role === "User"
           ? { address }
           : role === "Dispatcher"
-          ? { location: [latitude, longitude] }
+          ? { latitude, longitude }
           : {};
 
       const response = await fetch("/api/signup", {
@@ -37,7 +43,7 @@ export default function SignUp() {
           role,
           name,
           email,
-          phone,
+          contact,  // Changed from 'phone' to 'contact'
           username,
           password,
           ...additionalFields,
@@ -115,15 +121,15 @@ export default function SignUp() {
         </div>
 
         <div className="mb-6">
-          <label htmlFor="phone" className="block text-lg mb-2 font-semibold">
-            Phone Number
+          <label htmlFor="contact" className="block text-lg mb-2 font-semibold">
+            Contact Number
           </label>
           <input
-            id="phone"
+            id="contact"
             type="text"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Enter your phone number"
+            value={contact}  // Changed from 'phone' to 'contact'
+            onChange={(e) => setContact(e.target.value)}
+            placeholder="Enter your contact number"
             className="border border-gray-300 rounded px-4 py-2 w-full"
           />
         </div>
