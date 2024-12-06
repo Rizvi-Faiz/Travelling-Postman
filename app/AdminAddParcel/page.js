@@ -11,6 +11,7 @@ const AdminAddParcel = () => {
   const [username, setUsername] = useState("");
   const [orderId, setOrderId] = useState("");
   const [orderDetails, setOrderDetails] = useState(null);
+  const [buttonClicked, setButtonClicked]=useState(false);
 
   // New state for cities
   const [cities, setCities] = useState([]);
@@ -23,7 +24,7 @@ const AdminAddParcel = () => {
     senderCity: "",
     weight: "",
     volume: "",
-    preference: "Time",
+    preference: "",
     receiver_user_id: "",
     receiverCity: "",
     cost: 10, // Default cost
@@ -64,14 +65,55 @@ const AdminAddParcel = () => {
     };
     setOrderDetails(orderData);
   };
+  const calculateCost = async () => {
+    const { weight, volume, senderCity, receiverCity } = parcelData;
 
-  const calculateCost = () => {
-    const cost = 10; // Default cost set to 10
-    setParcelData((prevState) => ({
-      ...prevState,
-      cost: cost,
-    }));
+    if (!weight || !volume || !senderCity || !receiverCity) {
+      alert("Please fill in all required fields for cost calculation.");
+      return;
+    }
+    setButtonClicked(true) ;
+
+    try {
+      // Fetch lat-lon for sender and receiver cities (replace with your logic)
+      const senderCoords = cities.find(city => city.City === senderCity);
+      const receiverCoords = cities.find(city => city.City === receiverCity);
+
+      if (!senderCoords || !receiverCoords) {
+        alert("City coordinates not found. Please select valid cities.");
+        return;
+      }
+
+      // const dimensions = volume.split("x").map(Number); // Convert dimensions to array
+   const body = {
+        weight: parseFloat(weight),
+        volume: parseFloat(volume),
+        lat1: parseFloat(senderCoords.Latitude),
+        lon1: parseFloat(senderCoords.Longitude),
+        lat2: parseFloat(receiverCoords.Latitude),
+        lon2: parseFloat(receiverCoords.Longitude),
+        serviceType: parcelData.preference, // Example: Adjust based on user input
+      };
+
+      const response = await fetch("/api/calculate-cost", {
+        method: "POST",
+       
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setParcelData(prevState => ({ ...prevState, cost: data.cost }));
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || "Failed to calculate cost.");
+      }
+    } catch (error) {
+      console.error("Error calculating cost:", error);
+      alert("Error calculating cost. Please try again.");
+    }
   };
+
 
   const handleAddParcel = async () => {
     const { sender_user_id, senderCity, weight, volume, preference, receiver_user_id, receiverCity, cost } = parcelData;
@@ -221,7 +263,7 @@ const AdminAddParcel = () => {
                 <input
                   type="text"
                   className="w-1/2 border rounded px-3 py-2"
-                  placeholder="Weight (kg)"
+                  placeholder="Weight (g)"
                   value={parcelData.weight}
                   onChange={(e) => setParcelData({ ...parcelData, weight: e.target.value })}
                 />
@@ -277,7 +319,8 @@ const AdminAddParcel = () => {
               >
                 Calculate Cost
               </button>
-              <p className="text-xl font-semibold">Estimated Cost: ₹{parcelData.cost}</p>
+              {buttonClicked &&
+              <p className="text-xl font-semibold">Estimated Cost: ₹{parcelData.cost}</p>}
             </div>
             <button
               onClick={handleAddParcel}
