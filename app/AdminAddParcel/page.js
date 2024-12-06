@@ -5,18 +5,29 @@ import Navbar from "../components/Navbar";
 import withAuth from "@/lib/withAuth";
 import Logo from "/public/Logo.png";
 import Image from "next/image";
-import Papa from 'papaparse';
+import Papa from "papaparse";
 
 const AdminAddParcel = () => {
   const [username, setUsername] = useState("");
   const [orderId, setOrderId] = useState("");
   const [orderDetails, setOrderDetails] = useState(null);
-  const [calculatedCost, setCalculatedCost] = useState(null);
 
   // New state for cities
   const [cities, setCities] = useState([]);
   const [senderCity, setSenderCity] = useState("");
   const [receiverCity, setReceiverCity] = useState("");
+
+  // Parcel data state (added default cost as 10)
+  const [parcelData, setParcelData] = useState({
+    sender_user_id: "",
+    senderCity: "",
+    weight: "",
+    volume: "",
+    preference: "Time",
+    receiver_user_id: "",
+    receiverCity: "",
+    cost: 10, // Default cost
+  });
 
   // Load cities from CSV
   useEffect(() => {
@@ -29,7 +40,7 @@ const AdminAddParcel = () => {
             setCities(data);
           });
       } catch (error) {
-        console.error('Error reading cities file:', error);
+        console.error("Error reading cities file:", error);
       }
     };
 
@@ -55,8 +66,80 @@ const AdminAddParcel = () => {
   };
 
   const calculateCost = () => {
-    const cost = Math.floor(Math.random() * 1000) + 100; // Random cost between 100 and 1100
-    setCalculatedCost(cost);
+    const cost = 10; // Default cost set to 10
+    setParcelData((prevState) => ({
+      ...prevState,
+      cost: cost,
+    }));
+  };
+
+  const handleAddParcel = async () => {
+    const { sender_user_id, senderCity, weight, volume, preference, receiver_user_id, receiverCity, cost } = parcelData;
+
+    // Debugging: Log the current parcel data before validation
+    console.log("Current Parcel Data:", {
+      sender_user_id,
+      senderCity,
+      weight,
+      volume,
+      preference,
+      receiver_user_id,
+      receiverCity,
+      cost,
+    });
+
+    // Validate required fields
+    if (!sender_user_id || !senderCity || !weight || !volume || !preference || !receiver_user_id || !receiverCity || !cost) {
+      console.log("Missing fields detected");
+      alert("Please fill all the fields!");
+      return;
+    }
+
+    try {
+      // Debugging: Show the data being sent to the API
+      console.log("Sending data to API:", {
+        sender_user_id,
+        senderCity,
+        weight,
+        volume,
+        preference,
+        receiver_user_id,
+        receiverCity,
+        cost,
+      });
+
+      const response = await fetch("/api/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sender_user_id,
+          senderCity,
+          weight,
+          volume,
+          preference,
+          receiver_user_id,
+          receiverCity,
+          cost,
+        }),
+      });
+
+      const data = await response.json();
+
+      // Debugging: Log the response from the server
+      console.log("Server response:", data);
+
+      if (response.ok) {
+        alert("Parcel added successfully!");
+        console.log("New Order ID:", data.orderId);
+      } else {
+        alert(data.error || "Error adding parcel");
+      }
+    } catch (error) {
+      console.error("Error adding parcel:", error);
+      alert("Error adding parcel, please try again.");
+    }
   };
 
   return (
@@ -88,44 +171,42 @@ const AdminAddParcel = () => {
               <input
                 type="text"
                 className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Name"
+                placeholder="Sender ID"
+                value={parcelData.sender_user_id}
+                onChange={(e) => setParcelData({ ...parcelData, sender_user_id: e.target.value })}
               />
-              <input
-                type="text"
+              {/* City Dropdown for Sender */}
+              <select
                 className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Contact Number"
-              />
-              {/* <input
-                type="text"
-                className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Address"
-              /> */}
-
-              {/* City Dropdown for Sender within Address Field */}
-              <select 
-                className="w-full border rounded px-3 py-2 mb-2"
-                value={senderCity}
-                onChange={(e) => setSenderCity(e.target.value)}
+                value={parcelData.senderCity}
+                onChange={(e) => setParcelData({ ...parcelData, senderCity: e.target.value })}
               >
                 <option value="">Select Sender City</option>
                 {cities.map((city, index) => (
-                  <option key={index} value={city.City}>{city.City}</option>  
+                  <option key={index} value={city.City}>{city.City}</option>
                 ))}
               </select>
-
               <div className="flex space-x-4">
                 <input
                   type="text"
                   className="w-1/2 border rounded px-3 py-2"
                   placeholder="Weight (kg)"
+                  value={parcelData.weight}
+                  onChange={(e) => setParcelData({ ...parcelData, weight: e.target.value })}
                 />
                 <input
                   type="text"
                   className="w-1/2 border rounded px-3 py-2"
-                  placeholder="Dimensions (LxWxH cm)"
+                  placeholder="Volume (LxWxH cm)"
+                  value={parcelData.volume}
+                  onChange={(e) => setParcelData({ ...parcelData, volume: e.target.value })}
                 />
               </div>
-              <select className="w-full border rounded px-3 py-2 mt-2">
+              <select
+                className="w-full border rounded px-3 py-2 mt-2"
+                value={parcelData.preference}
+                onChange={(e) => setParcelData({ ...parcelData, preference: e.target.value })}
+              >
                 <option>Preference</option>
                 <option>Time</option>
                 <option>Cost</option>
@@ -140,28 +221,19 @@ const AdminAddParcel = () => {
               <input
                 type="text"
                 className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Name"
+                placeholder="Receiver ID"
+                value={parcelData.receiver_user_id}
+                onChange={(e) => setParcelData({ ...parcelData, receiver_user_id: e.target.value })}
               />
-              <input
-                type="text"
+              {/* City Dropdown for Receiver */}
+              <select
                 className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Contact Number"
-              />
-              {/* <input
-                type="text"
-                className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Address"
-              /> */}
-
-              {/* City Dropdown for Receiver within Address Field */}
-              <select 
-                className="w-full border rounded px-3 py-2 mb-2"
-                value={receiverCity}
-                onChange={(e) => setReceiverCity(e.target.value)}
+                value={parcelData.receiverCity}
+                onChange={(e) => setParcelData({ ...parcelData, receiverCity: e.target.value })}
               >
                 <option value="">Select Receiver City</option>
                 {cities.map((city, index) => (
-                  <option key={index} value={city.City}>{city.City}</option>  
+                  <option key={index} value={city.City}>{city.City}</option>
                 ))}
               </select>
             </div>
@@ -174,58 +246,47 @@ const AdminAddParcel = () => {
               >
                 Calculate Cost
               </button>
-              {calculatedCost !== null && (
-                <span className="text-green-600 font-bold">
-                  ₹{calculatedCost}
-                </span>
-              )}
+              <p className="text-xl font-semibold">Estimated Cost: ₹{parcelData.cost}</p>
             </div>
-            <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+            <button
+              onClick={handleAddParcel}
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
+            >
               Add Parcel
             </button>
           </div>
         </div>
 
-        {/* Right Section */}
+        {/* Right Section: Order Details */}
         <div className="bg-white p-6 shadow-md rounded-lg">
-          <h2 className="font-bold mb-4 text-lg">Manage Parcel</h2>
-          <div className="mb-4">
-            <input
-              type="text"
-              className="w-full border rounded px-3 py-2"
-              placeholder="Enter Order ID"
-              value={orderId}
-              onChange={(e) => setOrderId(e.target.value)}
-            />
-            <button
-              className="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors w-full"
-              onClick={handleOrderSearch}
-            >
-              Search Order
-            </button>
-          </div>
+          <h2 className="font-bold mb-4 text-lg">Order Search</h2>
+          <input
+            type="text"
+            className="w-full border rounded px-3 py-2 mb-4"
+            placeholder="Search Order ID"
+            value={orderId}
+            onChange={(e) => setOrderId(e.target.value)}
+          />
+          <button
+            onClick={handleOrderSearch}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+          >
+            Search
+          </button>
           {orderDetails && (
-            <div className="bg-gray-100 p-4 rounded">
-              <p>
-                <strong>Order ID:</strong> {orderDetails.orderId}
-              </p>
-              <p>
-                <strong>Current Location:</strong> {orderDetails.currentLocation}
-              </p>
-              <p>
-                <strong>Dispatch ID:</strong> {orderDetails.dispatchId}
-              </p>
-              <p>
-                <strong>ETA:</strong> {orderDetails.eta}
-              </p>
-              <p>
-                <strong>Contact:</strong> {orderDetails.contact}
-              </p>
+            <div className="mt-4">
+              <h3 className="font-semibold text-lg">Order Details</h3>
+              <p><strong>Order ID:</strong> {orderDetails.orderId}</p>
+              <p><strong>Location:</strong> {orderDetails.currentLocation}</p>
+              <p><strong>Dispatch ID:</strong> {orderDetails.dispatchId}</p>
+              <p><strong>ETA:</strong> {orderDetails.eta}</p>
+              <p><strong>Contact:</strong> {orderDetails.contact}</p>
             </div>
           )}
         </div>
       </main>
 
+      {/* Footer */}
       <Footer />
     </div>
   );
