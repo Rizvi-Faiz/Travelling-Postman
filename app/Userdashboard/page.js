@@ -8,6 +8,7 @@ import IndiaMap from "../components/IndiaMap";
 
 const UserDashboard = () => {
   const [username, setUsername] = useState(null);
+  const [userId, setUserId] = useState(null); // New state for userId
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [trackingId, setTrackingId] = useState("");
   const [idEntered, setIdEntered] = useState(false);
@@ -21,10 +22,12 @@ const UserDashboard = () => {
     if (role !== "User") {
       router.push("/Login");
     } else {
-      // Fetch username from localStorage
+      // Fetch username and userId from localStorage
       const username = localStorage.getItem("username");
+      const userId = localStorage.getItem("userId"); // Fetch userId
       if (username) {
         setUsername(username);
+        setUserId(userId); // Set userId state
       } else {
         console.error("User data not found in localStorage");
       }
@@ -47,7 +50,7 @@ const UserDashboard = () => {
     setIdEntered(true);
   };
 
-  if (!username) {
+  if (!username || !userId) {
     return <div>Loading...</div>;
   }
 
@@ -55,8 +58,9 @@ const UserDashboard = () => {
     <div className="bg-gray-100">
       <header className="relative flex items-center justify-between px-7 mt-8 mb-4">
         <Image src={Logo} alt="Postman Logo" width={120} height={120} />
-        <h1 className="text-4xl font-bold text-red-700 absolute left-1/2 transform -translate-x-1/2">
-          Welcome {username}
+        <h1 className="text-4xl font-bold text-red-700 absolute left-1/2 transform -translate-x-1/2 text-center">
+          Welcome {username} <br />
+          <span className="text-xl">Your User ID: {userId}</span>
         </h1>
         <div className="absolute right-7 cursor-pointer" onClick={toggleDropdown}>
           <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">

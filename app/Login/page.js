@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useRouter } from "next/navigation";
+
 export default function Login() {
   const [role, setRole] = useState("");
   const [username, setUsername] = useState("");
@@ -13,31 +14,33 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
+      const response = await fetch("/api/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password,role }),
+        body: JSON.stringify({ username, password, role }),
       });
 
       const data = await response.json();
-      console.log('API Response:', data); // Debugging
+
       if (response.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('username', data.username); // Store username
-        localStorage.setItem('role', role); // Store role
+        // Store user details in localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("userId", data.userId); // Store userId
+        localStorage.setItem("role", role);
 
         // Redirect based on role
-        if (role === "User") router.push('/Userdashboard');
-        else if (role === "Admin") router.push('/Admindashboard');
-        else if (role === "Dispatcher") router.push('/DispatcherDashboard');
+        if (role === "User") router.push("/Userdashboard");
+        else if (role === "Admin") router.push("/Admindashboard");
+        else if (role === "Dispatcher") router.push("/DispatcherDashboard");
       } else {
         alert(data.error);
       }
     } catch (error) {
-      console.error('Login failed', error);
-      alert('Failed to log in');
+      console.error("Login failed", error);
+      alert("Failed to log in");
     }
   };
 

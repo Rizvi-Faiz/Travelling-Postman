@@ -8,20 +8,22 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const { username, password, role } = body; // Added `role` to the input
-    console.log(password)
 
     if (!username || !password || !role) {
-      return NextResponse.json({ error: 'Username, password, and role are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Username, password, and role are required' },
+        { status: 400 }
+      );
     }
 
     // Determine the query based on the role
     let query = '';
     if (role === 'User') {
-      query = `SELECT user_id AS id, password, 'User' AS role FROM users WHERE username = $1`;
+      query = `SELECT user_id AS id, username, password, 'User' AS role FROM users WHERE username = $1`;
     } else if (role === 'Admin') {
-      query = `SELECT admin_id AS id, password, 'Admin' AS role FROM admin WHERE username = $1`;
+      query = `SELECT admin_id AS id, username, password, 'Admin' AS role FROM admin WHERE username = $1`;
     } else if (role === 'Dispatcher') {
-      query = `SELECT dispatcher_id AS id, password, 'Dispatcher' AS role FROM dispatcher WHERE username = $1`;
+      query = `SELECT dispatcher_id AS id, username, password, 'Dispatcher' AS role FROM dispatcher WHERE username = $1`;
     } else {
       return NextResponse.json({ error: 'Invalid role specified' }, { status: 400 });
     }
@@ -32,11 +34,10 @@ export async function POST(req) {
     if (result.rows.length === 0) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
-   
 
     const user = result.rows[0];
     const isMatch = await compare(password, user.password);
-    console.log(user) 
+
     if (!isMatch) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
@@ -59,7 +60,8 @@ export async function POST(req) {
     return NextResponse.json(
       {
         message: 'Authentication successful',
-        username,
+        username: user.username,
+        userId: user.id, // Include userId in the response
         role: user.role,
         token, // Optional: for client-side use if necessary
       },
