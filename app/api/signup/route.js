@@ -11,8 +11,7 @@ export async function POST(req) {
       username,
       password,
       address,
-      latitude,
-      longitude,
+      current_location, // Changed field
     } = await req.json();
 
     console.log("Incoming request data:", {
@@ -23,8 +22,7 @@ export async function POST(req) {
       username,
       password,
       address,
-      latitude,
-      longitude,
+      current_location,
     });
 
     // Validate required fields
@@ -43,16 +41,10 @@ export async function POST(req) {
       );
     }
 
-    if (
-      role === "Dispatcher" &&
-      (latitude === undefined ||
-        longitude === undefined ||
-        isNaN(latitude) ||
-        isNaN(longitude))
-    ) {
+    if (role === "Dispatcher" && !current_location) {
       return new Response(
         JSON.stringify({
-          error: "Valid latitude and longitude are required for Dispatcher role",
+          error: "Current location is required for Dispatcher role",
         }),
         { status: 400 }
       );
@@ -98,8 +90,8 @@ export async function POST(req) {
       values = [name, email, contact, username, hashedPassword];
     } else if (role === "Dispatcher") {
       query = `
-        INSERT INTO dispatcher (name, email, contact, username, password, latitude, longitude) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        INSERT INTO dispatcher (name, email, contact, username, password, current_location) 
+        VALUES ($1, $2, $3, $4, $5, $6)
       `;
       values = [
         name,
@@ -107,8 +99,7 @@ export async function POST(req) {
         contact,
         username,
         hashedPassword,
-        latitude,
-        longitude,
+        current_location, // Updated to include current_location
       ];
     } else {
       return new Response(

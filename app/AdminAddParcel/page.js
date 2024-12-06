@@ -75,7 +75,7 @@ const AdminAddParcel = () => {
 
   const handleAddParcel = async () => {
     const { sender_user_id, senderCity, weight, volume, preference, receiver_user_id, receiverCity, cost } = parcelData;
-
+  
     // Debugging: Log the current parcel data before validation
     console.log("Current Parcel Data:", {
       sender_user_id,
@@ -87,14 +87,14 @@ const AdminAddParcel = () => {
       receiverCity,
       cost,
     });
-
+  
     // Validate required fields
     if (!sender_user_id || !senderCity || !weight || !volume || !preference || !receiver_user_id || !receiverCity || !cost) {
       console.log("Missing fields detected");
       alert("Please fill all the fields!");
       return;
     }
-
+  
     try {
       // Debugging: Show the data being sent to the API
       console.log("Sending data to API:", {
@@ -107,7 +107,8 @@ const AdminAddParcel = () => {
         receiverCity,
         cost,
       });
-
+  
+      // Send the parcel data to the order API
       const response = await fetch("/api/order", {
         method: "POST",
         headers: {
@@ -124,15 +125,44 @@ const AdminAddParcel = () => {
           cost,
         }),
       });
-
+  
       const data = await response.json();
-
+  
       // Debugging: Log the response from the server
       console.log("Server response:", data);
-
+  
       if (response.ok) {
         alert("Parcel added successfully!");
         console.log("New Order ID:", data.orderId);
+  
+        // Fetch and add route
+        try {
+          const routeResponse = await fetch("/api/routes", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              orderId: data.orderId, // Send the generated order ID
+              senderCity: parcelData.senderCity,
+              receiverCity: parcelData.receiverCity,
+              weight: parcelData.weight, // Pass the order weight here
+              preference: parcelData.preference,
+            }),
+          });
+  
+          const routeData = await routeResponse.json();
+          console.log("Route API Response:", routeData);
+  
+          if (routeResponse.ok) {
+            alert(`Route added successfully: ${routeData.route}`);
+          } else {
+            alert(routeData.error || "Error adding route");
+          }
+        } catch (error) {
+          console.error("Error fetching route:", error);
+          alert("Error fetching route, please try again.");
+        }
       } else {
         alert(data.error || "Error adding parcel");
       }
@@ -141,6 +171,7 @@ const AdminAddParcel = () => {
       alert("Error adding parcel, please try again.");
     }
   };
+  
 
   return (
     <div className="flex flex-col bg-gray-100">
