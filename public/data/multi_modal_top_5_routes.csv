@@ -1,4 +1,4 @@
-Start City,End City,Route 1,Cost 1,Time 1,Route 2,Cost 2,Time 2,Route 3,Cost 3,Time 3,Route 4,Cost 4,Time 4,Route 5,Cost 5,Time 5
+StartCity,EndCity,Route 1,Cost 1,Time 1,Route 2,Cost 2,Time 2,Route 3,Cost 3,Time 3,Route 4,Cost 4,Time 4,Route 5,Cost 5,Time 5
 Nanjangud,Chittorgarh,Nanjangud(road)Chittorgarh,99.00,5.71,Nanjangud(rail)Pindwara(rail)Chittorgarh,171.00,10.68,Nanjangud(rail)Goregaon(rail)Pindwara(rail)Chittorgarh,207.00,17.00,Nanjangud(road)Ratnagiri(rail)Chittorgarh,208.00,11.15,Nanjangud(rail)Goregaon(road)Chittorgarh,215.00,10.77
 Nanjangud,Ratnagiri,Nanjangud(road)Ratnagiri,105.00,5.09,Nanjangud(rail)Pindwara(rail)Ratnagiri,167.00,9.68,Nanjangud(road)Chittorgarh(air)Ratnagiri,202.00,9.10,Nanjangud(rail)Goregaon(rail)Pindwara(rail)Ratnagiri,203.00,16.00,Nanjangud(rail)Goregaon(rail)Ratnagiri,223.00,9.18
 Nanjangud,Goregaon,Nanjangud(rail)Goregaon,107.00,6.51,Nanjangud(rail)Pindwara(road)Goregaon,176.00,11.01,Nanjangud(road)Chittorgarh(rail)Goregaon,178.00,12.10,Nanjangud(road)Ratnagiri(air)Goregaon,233.00,8.94,Nanjangud(rail)Pindwara(rail)Chittorgarh(rail)Goregaon,250.00,17.07

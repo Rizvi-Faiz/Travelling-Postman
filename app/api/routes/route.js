@@ -31,10 +31,15 @@ export async function POST(req) {
     console.log("Debug: Parsed Routes:", routes);
 
     const routeData = routes.find(
-      (route) =>
-        route.source.trim().toLowerCase() === senderCity.trim().toLowerCase() &&
-        route.destination.trim().toLowerCase() === receiverCity.trim().toLowerCase()
-    );
+        (route) => {
+            const startCity = route.StartCity ? route.StartCity.trim().toLowerCase() : '';
+            const endCity = route.EndCity ? route.EndCity.trim().toLowerCase() : '';
+            console.log("Debug: Checking cities:", senderCity.trim().toLowerCase(), receiverCity.trim().toLowerCase(), startCity, endCity);
+            return startCity === senderCity.trim().toLowerCase() && endCity === receiverCity.trim().toLowerCase();
+            
+        }
+      );
+      
     console.log("Debug: Matched Route Data:", routeData);
 
     if (!routeData) {
@@ -46,10 +51,11 @@ export async function POST(req) {
 
     const paths = [];
     for (let i = 1; i <= 5; i++) {
-      const path = routeData[`path${i}`];
-      const cost = parseFloat(routeData[`cost${i}`]);
-      if (path && !isNaN(cost)) {
-        paths.push({ path, cost });
+      const path = routeData[`Route ${i}`];
+      const cost = parseFloat(routeData[`Cost ${i}`]);
+      const time = parseFloat(routeData[`Time ${i}`]);
+      if (path && !isNaN(cost) && !isNaN(time)) {
+        paths.push({ path, cost, time });
       }
     }
     console.log("Debug: Extracted Paths and Costs:", paths);
@@ -62,13 +68,18 @@ export async function POST(req) {
     }
 
     const isRouteSafe = (path) => {
-      const nodes = path.split(" → ");
-      console.log("Debug: Safety Check for Nodes:", nodes);
-      return nodes.every((node) => true); 
-    };
-
-    const safePaths = paths.filter((route) => isRouteSafe(route.path));
-    console.log("Debug: Safe Paths:", safePaths);
+        // Split the path based on 'road', 'rail', or 'air'
+        const nodes = path.split(/\s?\(road\)|\s?\(rail\)|\s?\(air\)/).map((node) => node.trim()).filter((node) => node !== '');
+      
+        console.log("Debug: Safety Check for Nodes:", nodes);
+      
+        // Implement safety checks for each node if needed, e.g., check node validity or any other condition
+        return nodes.every((node) => true); // Placeholder: replace with actual safety checks if necessary
+      };
+      
+      const safePaths = paths.filter((route) => isRouteSafe(route.path));
+      console.log("Debug: Safe Paths:", safePaths);
+      
 
     if (safePaths.length === 0) {
       return new Response(
@@ -267,14 +278,12 @@ export async function POST(req) {
         null,
       ];
       await db.query(assignmentQuery, assignmentValues);
-      console.log("Debug: Assignment Created for New Route");
+      console.log("Debug: Assignment Created");
 
       return new Response(
         JSON.stringify({
-          message: "New route created successfully",
-          route: selectedRoute.path,
-          cost: selectedRoute.cost,
-          dispatcherId,
+          message: "Route created successfully",
+          dispatcherId: dispatcherId,
         }),
         { status: 201 }
       );
@@ -282,7 +291,7 @@ export async function POST(req) {
   } catch (error) {
     console.error("Error:", error);
     return new Response(
-      JSON.stringify({ error: "An unexpected error occurred" }),
+      JSON.stringify({ error: "Internal server error" }),
       { status: 500 }
     );
   }
