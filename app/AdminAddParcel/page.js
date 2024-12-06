@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import withAuth from "@/lib/withAuth";
 import Logo from "/public/Logo.png";
 import Image from "next/image";
+import Papa from 'papaparse';
 
 const AdminAddParcel = () => {
   const [username, setUsername] = useState("");
@@ -12,13 +13,34 @@ const AdminAddParcel = () => {
   const [orderDetails, setOrderDetails] = useState(null);
   const [calculatedCost, setCalculatedCost] = useState(null);
 
+  // New state for cities
+  const [cities, setCities] = useState([]);
+  const [senderCity, setSenderCity] = useState("");
+  const [receiverCity, setReceiverCity] = useState("");
+
+  // Load cities from CSV
   useEffect(() => {
+    const loadCities = async () => {
+      try {
+        fetch("/data/Indian_cities.csv")
+          .then((response) => response.text())
+          .then((csvText) => {
+            const { data } = Papa.parse(csvText, { header: true });
+            setCities(data);
+          });
+      } catch (error) {
+        console.error('Error reading cities file:', error);
+      }
+    };
+
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
       setUsername(storedUsername);
     } else {
       setUsername("Admin");
     }
+
+    loadCities();
   }, []);
 
   const handleOrderSearch = () => {
@@ -38,9 +60,9 @@ const AdminAddParcel = () => {
   };
 
   return (
-    <div className=" flex flex-col bg-gray-100">
+    <div className="flex flex-col bg-gray-100">
       {/* Fixed Header and Navbar */}
-      <header className="relative bg-white ">
+      <header className="relative bg-white">
         <div className="flex items-center justify-center px-8 py-8 relative">
           <div className="absolute left-4">
             <Image src={Logo} alt="Postman Logo" width={120} height={120} />
@@ -49,7 +71,6 @@ const AdminAddParcel = () => {
             Welcome {username}!
           </h1>
         </div>
-        {/* <div className="bg-red-700 h-4 w-full"></div> */}
       </header>
       <Navbar />
 
@@ -74,11 +95,24 @@ const AdminAddParcel = () => {
                 className="w-full border rounded px-3 py-2 mb-2"
                 placeholder="Contact Number"
               />
-              <input
+              {/* <input
                 type="text"
                 className="w-full border rounded px-3 py-2 mb-2"
                 placeholder="Address"
-              />
+              /> */}
+
+              {/* City Dropdown for Sender within Address Field */}
+              <select 
+                className="w-full border rounded px-3 py-2 mb-2"
+                value={senderCity}
+                onChange={(e) => setSenderCity(e.target.value)}
+              >
+                <option value="">Select Sender City</option>
+                {cities.map((city, index) => (
+                  <option key={index} value={city.City}>{city.City}</option>  
+                ))}
+              </select>
+
               <div className="flex space-x-4">
                 <input
                   type="text"
@@ -113,11 +147,23 @@ const AdminAddParcel = () => {
                 className="w-full border rounded px-3 py-2 mb-2"
                 placeholder="Contact Number"
               />
-              <input
+              {/* <input
                 type="text"
                 className="w-full border rounded px-3 py-2 mb-2"
                 placeholder="Address"
-              />
+              /> */}
+
+              {/* City Dropdown for Receiver within Address Field */}
+              <select 
+                className="w-full border rounded px-3 py-2 mb-2"
+                value={receiverCity}
+                onChange={(e) => setReceiverCity(e.target.value)}
+              >
+                <option value="">Select Receiver City</option>
+                {cities.map((city, index) => (
+                  <option key={index} value={city.City}>{city.City}</option>  
+                ))}
+              </select>
             </div>
           </div>
           <div className="flex items-center justify-between mt-6">
