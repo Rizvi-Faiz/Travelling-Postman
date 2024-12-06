@@ -69,9 +69,24 @@ const IndiaMap = () => {
                 });
             }
 
+            // // Add markers for start and end points
+            // new mapboxgl.Marker().setLngLat(startCoords).addTo(map);
+            // new mapboxgl.Marker({ color: "red" }).setLngLat(endCoords).addTo(map);
+
+            const markers = document.getElementsByClassName('mapboxgl-marker');
+            while (markers[0]) {
+                markers[0].remove();
+            }
+
             // Add markers for start and end points
             new mapboxgl.Marker().setLngLat(startCoords).addTo(map);
             new mapboxgl.Marker({ color: "red" }).setLngLat(endCoords).addTo(map);
+
+            // Adjust map viewport to fit the route
+            const bounds = new mapboxgl.LngLatBounds();
+            bounds.extend(startCoords);
+            bounds.extend(endCoords);
+            map.fitBounds(bounds, { padding: 50 }); // Add padding around the bounds
         } catch (error) {
             console.error("Error fetching route:", error);
         }
@@ -102,7 +117,7 @@ const IndiaMap = () => {
                 <select
                     onChange={handleStartChange}
                     defaultValue=""
-                    className="p-2 border rounded-md text-gray-700"
+                    className="w-1/2 p-2 border rounded-md text-gray-700"
                 >
                     <option value="" disabled>
                         Select Starting City
@@ -116,7 +131,7 @@ const IndiaMap = () => {
                 <select
                     onChange={handleEndChange}
                     defaultValue=""
-                    className="p-2 border rounded-md text-gray-700"
+                    className="w-1/2 p-2 border rounded-md text-gray-700"
                 >
                     <option value="" disabled>
                         Select Destination City
@@ -129,7 +144,7 @@ const IndiaMap = () => {
                 </select>
                 <button
                     onClick={handleGetRoute}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700"
+                    className="w-1/4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700"
                 >
                     Get Route
                 </button>
