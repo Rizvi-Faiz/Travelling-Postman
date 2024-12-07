@@ -39,7 +39,7 @@ footer {
 /* Add this to your global CSS or component-specific CSS file */
 .map-container {
   width: 100%;
-  height: 100%;
+  height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,4 +51,32 @@ footer {
   max-width: 100%; /* Make the map responsive */
   max-height: 100%; /* Prevent it from exceeding container height */
   object-fit: contain; /* Maintain aspect ratio */
+}
+
+
+.marker {
+  background-color: red;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+}
+
+.markerEnd {
+  background-color: green;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+}
+
+.markerTruck {
+  background-color: blue;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
 }
