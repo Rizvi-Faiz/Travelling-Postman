@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import Papa from "papaparse"; // To parse CSV files
+import styles from "../IndiaMap.module.css"; // CSS module for styling
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2F1cmFiaC12ZXJtYSIsImEiOiJjbTQ4OXpnZGwwYTQ2MmtxeDFtajNhZ2l5In0.tn-LonzCO78ByE5-rSc5mg';
 
@@ -69,18 +70,15 @@ const IndiaMap = () => {
                 });
             }
 
-            // // Add markers for start and end points
-            // new mapboxgl.Marker().setLngLat(startCoords).addTo(map);
-            // new mapboxgl.Marker({ color: "red" }).setLngLat(endCoords).addTo(map);
-
-            const markers = document.getElementsByClassName('mapboxgl-marker');
+            // Remove existing markers
+            const markers = document.getElementsByClassName(styles.marker);
             while (markers[0]) {
                 markers[0].remove();
             }
 
             // Add markers for start and end points
-            new mapboxgl.Marker().setLngLat(startCoords).addTo(map);
-            new mapboxgl.Marker({ color: "red" }).setLngLat(endCoords).addTo(map);
+            new mapboxgl.Marker({ className: styles.marker }).setLngLat(startCoords).addTo(map);
+            new mapboxgl.Marker({ className: styles.markerEnd }).setLngLat(endCoords).addTo(map);
 
             // Adjust map viewport to fit the route
             const bounds = new mapboxgl.LngLatBounds();
@@ -151,7 +149,7 @@ const IndiaMap = () => {
             </div>
 
             {/* Map Section */}
-            <div id="map" className="flex-1"></div>
+            <div id="map" className={styles.map}></div>
         </div>
     );
 };
