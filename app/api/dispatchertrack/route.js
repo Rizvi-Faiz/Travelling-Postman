@@ -98,6 +98,8 @@ export async function GET(req) {
           };
         }
 
+
+        
         // Calculate delay (in days)
         let delay = Math.max(
           (currentTime - expectedDropTime) / (1000 * 60 * 60 * 24),
