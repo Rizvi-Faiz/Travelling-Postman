@@ -11,6 +11,7 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@mapbox/mapbox-sdk": "^0.16.1",
+    "@react-email/components": "^0.0.30",
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.7",
     "chartjs": "^0.3.24",
@@ -27,7 +28,8 @@
     "pg": "^8.13.1",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
-    "react-leaflet": "^5.0.0-rc.1"
+    "react-leaflet": "^5.0.0-rc.1",
+    "resend": "^4.0.1"
   },
   "devDependencies": {
     "postcss": "^8",
