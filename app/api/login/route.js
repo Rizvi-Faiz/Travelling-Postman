@@ -1,19 +1,35 @@
 import { compare } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { serialize } from 'cookie';  
+import { serialize } from 'cookie';
 import db from '../../../lib/db';
-import { NextResponse } from 'next/server';  
+import { NextResponse } from 'next/server';
 
 export async function POST(req) {
   try {
-    const body = await req.json(); 
-    const { username, password } = body;
+    const body = await req.json();
+    const { username, password, role } = body; // Added `role` to the input
 
-    if (!username || !password) {
-      return NextResponse.json({ error: 'Username and password are required' }, { status: 400 });
+    if (!username || !password || !role) {
+      return NextResponse.json(
+        { error: 'Username, password, and role are required' },
+        { status: 400 }
+      );
     }
 
-    const result = await db.query('SELECT * FROM users WHERE username = $1', [username]);
+    // Determine the query based on the role
+    let query = '';
+    if (role === 'User') {
+      query = `SELECT user_id AS id, username, password, 'User' AS role FROM users WHERE username = $1`;
+    } else if (role === 'Admin') {
+      query = `SELECT admin_id AS id, username, password, 'Admin' AS role FROM admin WHERE username = $1`;
+    } else if (role === 'Dispatcher') {
+      query = `SELECT dispatcher_id AS id, username, password, 'Dispatcher' AS role FROM dispatcher WHERE username = $1`;
+    } else {
+      return NextResponse.json({ error: 'Invalid role specified' }, { status: 400 });
+    }
+
+    // Execute the role-specific query
+    const result = await db.query(query, [username]);
 
     if (result.rows.length === 0) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
@@ -26,24 +42,28 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+    // Generate JWT token
+    const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
 
+    // Set the cookie
     const cookieHeader = serialize('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',  
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 3600,  
+      maxAge: 3600,
       path: '/',
     });
 
+    // Return success response
     return NextResponse.json(
       {
         message: 'Authentication successful',
-        username: user.username, // Include username in the response
-        role: user.role,         // Include role if needed
-        token,                   // Include token for optional client-side use
+        username: user.username,
+        userId: user.id, // Include userId in the response
+        role: user.role,
+        token, // Optional: for client-side use if necessary
       },
       {
         status: 200,
@@ -52,7 +72,6 @@ export async function POST(req) {
         },
       }
     );
-
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Failed to authenticate' }, { status: 500 });

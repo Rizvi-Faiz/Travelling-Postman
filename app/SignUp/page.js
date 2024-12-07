@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Papa from "papaparse"; // Import Papa for CSV parsing
 import { useRouter } from "next/navigation";
 
 export default function SignUp() {
@@ -12,20 +13,42 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [contact, setContact] = useState("");
   const [address, setAddress] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
+  const [current_location, setcurrent_location] = useState("");
+  const [cities, setCities] = useState([]); // Cities state
 
   const router = useRouter();
 
+  // Load cities dynamically from CSV
+  useEffect(() => {
+    const loadCities = async () => {
+      try {
+        const response = await fetch("/data/Indian_cities.csv");
+        const csvText = await response.text();
+        const { data } = Papa.parse(csvText, { header: true });
+        setCities(data.map((city) => city.City)); // Map to extract city names
+      } catch (error) {
+        console.error("Error reading cities file:", error);
+      }
+    };
+
+    loadCities();
+  }, []);
+
   const handleSignUp = async () => {
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
     try {
       const additionalFields =
         role === "User"
           ? { address }
           : role === "Dispatcher"
-          ? { location: [latitude, longitude] }
+          ? { current_location }
           : {};
 
       const response = await fetch("/api/signup", {
@@ -37,7 +60,7 @@ export default function SignUp() {
           role,
           name,
           email,
-          phone,
+          contact,
           username,
           password,
           ...additionalFields,
@@ -115,15 +138,15 @@ export default function SignUp() {
         </div>
 
         <div className="mb-6">
-          <label htmlFor="phone" className="block text-lg mb-2 font-semibold">
-            Phone Number
+          <label htmlFor="contact" className="block text-lg mb-2 font-semibold">
+            Contact Number
           </label>
           <input
-            id="phone"
+            id="contact"
             type="text"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Enter your phone number"
+            value={contact}
+            onChange={(e) => setContact(e.target.value)}
+            placeholder="Enter your contact number"
             className="border border-gray-300 rounded px-4 py-2 w-full"
           />
         </div>
@@ -145,35 +168,26 @@ export default function SignUp() {
         )}
 
         {role === "Dispatcher" && (
-          <>
-            <div className="mb-6">
-              <label htmlFor="latitude" className="block text-lg mb-2 font-semibold">
-                Latitude
-              </label>
-              <input
-                id="latitude"
-                type="text"
-                value={latitude}
-                onChange={(e) => setLatitude(e.target.value)}
-                placeholder="Enter latitude"
-                className="border border-gray-300 rounded px-4 py-2 w-full"
-              />
-            </div>
-
-            <div className="mb-6">
-              <label htmlFor="longitude" className="block text-lg mb-2 font-semibold">
-                Longitude
-              </label>
-              <input
-                id="longitude"
-                type="text"
-                value={longitude}
-                onChange={(e) => setLongitude(e.target.value)}
-                placeholder="Enter longitude"
-                className="border border-gray-300 rounded px-4 py-2 w-full"
-              />
-            </div>
-          </>
+          <div className="mb-6">
+            <label htmlFor="city" className="block text-lg mb-2 font-semibold">
+              City
+            </label>
+            <select
+              id="city"
+              value={current_location}
+              onChange={(e) => setcurrent_location(e.target.value)}
+              className="border border-gray-300 rounded px-4 py-2 w-full"
+            >
+              <option value="" disabled>
+                Select your city
+              </option>
+              {cities.map((city, index) => (
+                <option key={index} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
+          </div>
         )}
 
         <div className="mb-6">

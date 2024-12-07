@@ -5,20 +5,54 @@ import Navbar from "../components/Navbar";
 import withAuth from "@/lib/withAuth";
 import Logo from "/public/Logo.png";
 import Image from "next/image";
+import Papa from "papaparse";
 
 const AdminAddParcel = () => {
   const [username, setUsername] = useState("");
   const [orderId, setOrderId] = useState("");
   const [orderDetails, setOrderDetails] = useState(null);
-  const [calculatedCost, setCalculatedCost] = useState(null);
+  const [buttonClicked, setButtonClicked]=useState(false);
 
+  // New state for cities
+  const [cities, setCities] = useState([]);
+  const [senderCity, setSenderCity] = useState("");
+  const [receiverCity, setReceiverCity] = useState("");
+
+  // Parcel data state (added default cost as 10)
+  const [parcelData, setParcelData] = useState({
+    sender_user_id: "",
+    senderCity: "",
+    weight: "",
+    volume: "",
+    preference: "",
+    receiver_user_id: "",
+    receiverCity: "",
+    cost: 10, // Default cost
+  });
+
+  // Load cities from CSV
   useEffect(() => {
+    const loadCities = async () => {
+      try {
+        fetch("/data/Indian_cities.csv")
+          .then((response) => response.text())
+          .then((csvText) => {
+            const { data } = Papa.parse(csvText, { header: true });
+            setCities(data);
+          });
+      } catch (error) {
+        console.error("Error reading cities file:", error);
+      }
+    };
+
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
       setUsername(storedUsername);
     } else {
       setUsername("Admin");
     }
+
+    loadCities();
   }, []);
 
   const handleOrderSearch = () => {
@@ -31,16 +65,160 @@ const AdminAddParcel = () => {
     };
     setOrderDetails(orderData);
   };
+  const calculateCost = async () => {
+    const { weight, volume, senderCity, receiverCity } = parcelData;
 
-  const calculateCost = () => {
-    const cost = Math.floor(Math.random() * 1000) + 100; // Random cost between 100 and 1100
-    setCalculatedCost(cost);
+    if (!weight || !volume || !senderCity || !receiverCity) {
+      alert("Please fill in all required fields for cost calculation.");
+      return;
+    }
+    setButtonClicked(true) ;
+
+    try {
+      // Fetch lat-lon for sender and receiver cities (replace with your logic)
+      const senderCoords = cities.find(city => city.City === senderCity);
+      const receiverCoords = cities.find(city => city.City === receiverCity);
+
+      if (!senderCoords || !receiverCoords) {
+        alert("City coordinates not found. Please select valid cities.");
+        return;
+      }
+
+      // const dimensions = volume.split("x").map(Number); // Convert dimensions to array
+   const body = {
+        weight: parseFloat(weight),
+        volume: parseFloat(volume),
+        lat1: parseFloat(senderCoords.Latitude),
+        lon1: parseFloat(senderCoords.Longitude),
+        lat2: parseFloat(receiverCoords.Latitude),
+        lon2: parseFloat(receiverCoords.Longitude),
+        serviceType: parcelData.preference, // Example: Adjust based on user input
+      };
+
+      const response = await fetch("/api/calculate-cost", {
+        method: "POST",
+       
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setParcelData(prevState => ({ ...prevState, cost: data.cost }));
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || "Failed to calculate cost.");
+      }
+    } catch (error) {
+      console.error("Error calculating cost:", error);
+      alert("Error calculating cost. Please try again.");
+    }
   };
 
+
+  const handleAddParcel = async () => {
+    const { sender_user_id, senderCity, weight, volume, preference, receiver_user_id, receiverCity, cost } = parcelData;
+  
+    // Debugging: Log the current parcel data before validation
+    console.log("Current Parcel Data:", {
+      sender_user_id,
+      senderCity,
+      weight,
+      volume,
+      preference,
+      receiver_user_id,
+      receiverCity,
+      cost,
+    });
+  
+    // Validate required fields
+    if (!sender_user_id || !senderCity || !weight || !volume || !preference || !receiver_user_id || !receiverCity || !cost) {
+      console.log("Missing fields detected");
+      alert("Please fill all the fields!");
+      return;
+    }
+  
+    try {
+      // Debugging: Show the data being sent to the API
+      console.log("Sending data to API:", {
+        sender_user_id,
+        senderCity,
+        weight,
+        volume,
+        preference,
+        receiver_user_id,
+        receiverCity,
+        cost,
+      });
+  
+      // Send the parcel data to the order API
+      const response = await fetch("/api/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sender_user_id,
+          senderCity,
+          weight,
+          volume,
+          preference,
+          receiver_user_id,
+          receiverCity,
+          cost,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      // Debugging: Log the response from the server
+      console.log("Server response:", data);
+  
+      if (response.ok) {
+        alert("Parcel added successfully!");
+        console.log("New Order ID:", data.orderId);
+  
+        // Fetch and add route
+        try {
+          const routeResponse = await fetch("/api/routes", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              orderId: data.orderId, // Send the generated order ID
+              senderCity: parcelData.senderCity,
+              receiverCity: parcelData.receiverCity,
+              weight: parcelData.weight, // Pass the order weight here
+              preference: parcelData.preference,
+            }),
+          });
+  
+          const routeData = await routeResponse.json();
+          console.log("Route API Response:", routeData);
+  
+          if (routeResponse.ok) {
+            alert(`Route added successfully: ${routeData.route}`);
+          } else {
+            alert(routeData.error || "Error adding route");
+          }
+        } catch (error) {
+          console.error("Error fetching route:", error);
+          alert("Error fetching route, please try again.");
+        }
+      } else {
+        alert(data.error || "Error adding parcel");
+      }
+    } catch (error) {
+      console.error("Error adding parcel:", error);
+      alert("Error adding parcel, please try again.");
+    }
+  };
+  
+
   return (
-    <div className=" flex flex-col bg-gray-100">
+    <div className="flex flex-col bg-gray-100">
       {/* Fixed Header and Navbar */}
-      <header className="relative bg-white ">
+      <header className="relative bg-white">
         <div className="flex items-center justify-center px-8 py-8 relative">
           <div className="absolute left-4">
             <Image src={Logo} alt="Postman Logo" width={120} height={120} />
@@ -49,7 +227,6 @@ const AdminAddParcel = () => {
             Welcome {username}!
           </h1>
         </div>
-        {/* <div className="bg-red-700 h-4 w-full"></div> */}
       </header>
       <Navbar />
 
@@ -67,31 +244,42 @@ const AdminAddParcel = () => {
               <input
                 type="text"
                 className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Name"
+                placeholder="Sender ID"
+                value={parcelData.sender_user_id}
+                onChange={(e) => setParcelData({ ...parcelData, sender_user_id: e.target.value })}
               />
-              <input
-                type="text"
+              {/* City Dropdown for Sender */}
+              <select
                 className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Contact Number"
-              />
-              <input
-                type="text"
-                className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Address"
-              />
+                value={parcelData.senderCity}
+                onChange={(e) => setParcelData({ ...parcelData, senderCity: e.target.value })}
+              >
+                <option value="">Select Sender City</option>
+                {cities.map((city, index) => (
+                  <option key={index} value={city.City}>{city.City}</option>
+                ))}
+              </select>
               <div className="flex space-x-4">
                 <input
                   type="text"
                   className="w-1/2 border rounded px-3 py-2"
-                  placeholder="Weight (kg)"
+                  placeholder="Weight (g)"
+                  value={parcelData.weight}
+                  onChange={(e) => setParcelData({ ...parcelData, weight: e.target.value })}
                 />
                 <input
                   type="text"
                   className="w-1/2 border rounded px-3 py-2"
-                  placeholder="Dimensions (LxWxH cm)"
+                  placeholder="Volume (LxWxH cm)"
+                  value={parcelData.volume}
+                  onChange={(e) => setParcelData({ ...parcelData, volume: e.target.value })}
                 />
               </div>
-              <select className="w-full border rounded px-3 py-2 mt-2">
+              <select
+                className="w-full border rounded px-3 py-2 mt-2"
+                value={parcelData.preference}
+                onChange={(e) => setParcelData({ ...parcelData, preference: e.target.value })}
+              >
                 <option>Preference</option>
                 <option>Time</option>
                 <option>Cost</option>
@@ -106,18 +294,21 @@ const AdminAddParcel = () => {
               <input
                 type="text"
                 className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Name"
+                placeholder="Receiver ID"
+                value={parcelData.receiver_user_id}
+                onChange={(e) => setParcelData({ ...parcelData, receiver_user_id: e.target.value })}
               />
-              <input
-                type="text"
+              {/* City Dropdown for Receiver */}
+              <select
                 className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Contact Number"
-              />
-              <input
-                type="text"
-                className="w-full border rounded px-3 py-2 mb-2"
-                placeholder="Address"
-              />
+                value={parcelData.receiverCity}
+                onChange={(e) => setParcelData({ ...parcelData, receiverCity: e.target.value })}
+              >
+                <option value="">Select Receiver City</option>
+                {cities.map((city, index) => (
+                  <option key={index} value={city.City}>{city.City}</option>
+                ))}
+              </select>
             </div>
           </div>
           <div className="flex items-center justify-between mt-6">
@@ -128,58 +319,48 @@ const AdminAddParcel = () => {
               >
                 Calculate Cost
               </button>
-              {calculatedCost !== null && (
-                <span className="text-green-600 font-bold">
-                  ₹{calculatedCost}
-                </span>
-              )}
+              {buttonClicked &&
+              <p className="text-xl font-semibold">Estimated Cost: ₹{parcelData.cost}</p>}
             </div>
-            <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+            <button
+              onClick={handleAddParcel}
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
+            >
               Add Parcel
             </button>
           </div>
         </div>
 
-        {/* Right Section */}
+        {/* Right Section: Order Details */}
         <div className="bg-white p-6 shadow-md rounded-lg">
-          <h2 className="font-bold mb-4 text-lg">Manage Parcel</h2>
-          <div className="mb-4">
-            <input
-              type="text"
-              className="w-full border rounded px-3 py-2"
-              placeholder="Enter Order ID"
-              value={orderId}
-              onChange={(e) => setOrderId(e.target.value)}
-            />
-            <button
-              className="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors w-full"
-              onClick={handleOrderSearch}
-            >
-              Search Order
-            </button>
-          </div>
+          <h2 className="font-bold mb-4 text-lg">Order Search</h2>
+          <input
+            type="text"
+            className="w-full border rounded px-3 py-2 mb-4"
+            placeholder="Search Order ID"
+            value={orderId}
+            onChange={(e) => setOrderId(e.target.value)}
+          />
+          <button
+            onClick={handleOrderSearch}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+          >
+            Search
+          </button>
           {orderDetails && (
-            <div className="bg-gray-100 p-4 rounded">
-              <p>
-                <strong>Order ID:</strong> {orderDetails.orderId}
-              </p>
-              <p>
-                <strong>Current Location:</strong> {orderDetails.currentLocation}
-              </p>
-              <p>
-                <strong>Dispatch ID:</strong> {orderDetails.dispatchId}
-              </p>
-              <p>
-                <strong>ETA:</strong> {orderDetails.eta}
-              </p>
-              <p>
-                <strong>Contact:</strong> {orderDetails.contact}
-              </p>
+            <div className="mt-4">
+              <h3 className="font-semibold text-lg">Order Details</h3>
+              <p><strong>Order ID:</strong> {orderDetails.orderId}</p>
+              <p><strong>Location:</strong> {orderDetails.currentLocation}</p>
+              <p><strong>Dispatch ID:</strong> {orderDetails.dispatchId}</p>
+              <p><strong>ETA:</strong> {orderDetails.eta}</p>
+              <p><strong>Contact:</strong> {orderDetails.contact}</p>
             </div>
           )}
         </div>
       </main>
 
+      {/* Footer */}
       <Footer />
     </div>
   );

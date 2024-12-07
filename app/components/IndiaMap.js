@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import Papa from "papaparse"; // To parse CSV files
+import styles from "../IndiaMap.module.css"; // CSS module for styling
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2F1cmFiaC12ZXJtYSIsImEiOiJjbTQ4OXpnZGwwYTQ2MmtxeDFtajNhZ2l5In0.tn-LonzCO78ByE5-rSc5mg';
 
@@ -69,9 +70,21 @@ const IndiaMap = () => {
                 });
             }
 
+            // Remove existing markers
+            const markers = document.getElementsByClassName(styles.marker);
+            while (markers[0]) {
+                markers[0].remove();
+            }
+
             // Add markers for start and end points
-            new mapboxgl.Marker().setLngLat(startCoords).addTo(map);
-            new mapboxgl.Marker({ color: "red" }).setLngLat(endCoords).addTo(map);
+            new mapboxgl.Marker({ className: styles.marker }).setLngLat(startCoords).addTo(map);
+            new mapboxgl.Marker({ className: styles.markerEnd }).setLngLat(endCoords).addTo(map);
+
+            // Adjust map viewport to fit the route
+            const bounds = new mapboxgl.LngLatBounds();
+            bounds.extend(startCoords);
+            bounds.extend(endCoords);
+            map.fitBounds(bounds, { padding: 50 }); // Add padding around the bounds
         } catch (error) {
             console.error("Error fetching route:", error);
         }
@@ -102,7 +115,7 @@ const IndiaMap = () => {
                 <select
                     onChange={handleStartChange}
                     defaultValue=""
-                    className="p-2 border rounded-md text-gray-700"
+                    className="w-1/2 p-2 border rounded-md text-gray-700"
                 >
                     <option value="" disabled>
                         Select Starting City
@@ -116,7 +129,7 @@ const IndiaMap = () => {
                 <select
                     onChange={handleEndChange}
                     defaultValue=""
-                    className="p-2 border rounded-md text-gray-700"
+                    className="w-1/2 p-2 border rounded-md text-gray-700"
                 >
                     <option value="" disabled>
                         Select Destination City
@@ -129,14 +142,14 @@ const IndiaMap = () => {
                 </select>
                 <button
                     onClick={handleGetRoute}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700"
+                    className="w-1/4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700"
                 >
                     Get Route
                 </button>
             </div>
 
             {/* Map Section */}
-            <div id="map" className="flex-1"></div>
+            <div id="map" className={styles.map}></div>
         </div>
     );
 };
