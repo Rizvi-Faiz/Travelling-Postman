@@ -29,7 +29,8 @@
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-leaflet": "^5.0.0-rc.1",
-    "resend": "^4.0.1"
+    "resend": "^4.0.1",
+    "travelling-postman": "file:"
   },
   "devDependencies": {
     "postcss": "^8",

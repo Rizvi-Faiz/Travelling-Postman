@@ -5,6 +5,7 @@ import Logo from "/public/Logo.png";
 import Image from "next/image";
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
+import IndiaMap from '../components/IndiaMap';
 
 const TrackShipment = () => {
     const [username, setUsername] = useState("");
@@ -84,9 +85,13 @@ const TrackShipment = () => {
                 <h2 className="text-2xl mb-4">Track the Dispatcher!</h2>
                 <div className="flex flex-col md:flex-row w-full justify-between space-y-4 md:space-y-0">
                     <div className="w-full md:w-1/2 p-4 border border-gray-300 flex flex-col items-center justify-center">
-                        <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
+                        {/* <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
                             <span>Map (integrate with actual map API)</span>
-                        </div>
+                        </div> */}
+                            <section className="w-full p-4 border border-gray-300">
+                               <IndiaMap/>
+                            </section>
+                        
                         <p>Current route : A - B - D</p>
                     </div>
 
