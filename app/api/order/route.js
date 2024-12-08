@@ -49,6 +49,7 @@ export async function POST(req) {
       receiver_user_id,
       receiverCity,
       cost, // Add cost to the incoming request
+      userId, // Get the userId from the request body
     } = await req.json();
 
     // Log the received data to debug
@@ -61,9 +62,10 @@ export async function POST(req) {
       receiver_user_id,
       receiverCity,
       cost,
+      userId, // Log userId for debugging
     });
 
-    // Validate required fields, including cost
+    // Validate required fields, including cost and userId
     if (
       !sender_user_id ||
       !senderCity ||
@@ -72,7 +74,8 @@ export async function POST(req) {
       !preference ||
       !receiver_user_id ||
       !receiverCity ||
-      !cost
+      !cost ||
+      !userId // Ensure userId is provided
     ) {
       return new Response(
         JSON.stringify({ error: "All fields are required" }),
@@ -80,10 +83,10 @@ export async function POST(req) {
       );
     }
 
-    // Insert the new parcel into the database, including cost
+    // Insert the new parcel into the database, including userId
     const result = await db.query(
-      `INSERT INTO Orders (sender_user_id, current_sender_location, weight, volume, preference, receiver_user_id, current_receiver_location, cost)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO Orders (sender_user_id, current_sender_location, weight, volume, preference, receiver_user_id, current_receiver_location, cost, admin_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING Order_ID`,
       [
         sender_user_id,
@@ -94,6 +97,7 @@ export async function POST(req) {
         receiver_user_id,
         receiverCity,
         cost, // Insert the cost value
+        userId, // Insert userId here
       ]
     );
 
@@ -114,3 +118,4 @@ export async function POST(req) {
     );
   }
 }
+

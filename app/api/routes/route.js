@@ -16,8 +16,8 @@ export async function POST(req) {
       );
     }
 
-    const csvFilePath = path.join(process.cwd(), "public/data/multi_modal_top_5_routes.csv");
-    console.log("Debug: CSV File Path:", csvFilePath);
+    const csvFilePath = path.join(process.cwd(), "public/data/multi_modal_top_5_routes_cost.csv");
+    // console.log("Debug: CSV File Path:", csvFilePath);
 
     if (!fs.existsSync(csvFilePath)) {
       console.error("Debug: CSV File Missing");
@@ -25,22 +25,22 @@ export async function POST(req) {
     }
 
     const csvData = fs.readFileSync(csvFilePath, "utf8");
-    console.log("Debug: Raw CSV Data:", csvData);
+    // console.log("Debug: Raw CSV Data:", csvData);
 
     const { data: routes } = Papa.parse(csvData, { header: true });
-    console.log("Debug: Parsed Routes:", routes);
+    // console.log("Debug: Parsed Routes:", routes);
 
     const routeData = routes.find(
         (route) => {
-            const startCity = route.StartCity ? route.StartCity.trim().toLowerCase() : '';
-            const endCity = route.EndCity ? route.EndCity.trim().toLowerCase() : '';
+            const startCity = route.startcity ? route.startcity.trim().toLowerCase() : '';
+            const endCity = route.endcity ? route.endcity.trim().toLowerCase() : '';
             console.log("Debug: Checking cities:", senderCity.trim().toLowerCase(), receiverCity.trim().toLowerCase(), startCity, endCity);
             return startCity === senderCity.trim().toLowerCase() && endCity === receiverCity.trim().toLowerCase();
             
         }
       );
       
-    console.log("Debug: Matched Route Data:", routeData);
+    // console.log("Debug: Matched Route Data:", routeData);
 
     if (!routeData) {
       return new Response(

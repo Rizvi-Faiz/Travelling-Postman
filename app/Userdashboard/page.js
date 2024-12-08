@@ -20,7 +20,7 @@ const UserDashboard = () => {
       typeof window !== "undefined" ? localStorage.getItem("role") : null;
 
     if (role !== "User") {
-      router.push("/Login");
+      router.push("/login");
     } else {
       const username = localStorage.getItem("username");
       const userId = localStorage.getItem("userId");

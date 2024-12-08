@@ -6,20 +6,19 @@ import withAuth from "@/lib/withAuth";
 import Logo from "/public/Logo.png";
 import Image from "next/image";
 import Papa from "papaparse";
+import { useRouter } from "next/navigation"; // Correct import for routing
 import { SendOrderConfirmationEmail } from "@/helpers/SendOrderConfirmationEmail";
 
 const AdminAddParcel = () => {
   const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState(null);
   const [orderId, setOrderId] = useState("");
   const [orderDetails, setOrderDetails] = useState(null);
-  const [buttonClicked, setButtonClicked]=useState(false);
-
-  // New state for cities
+  const [buttonClicked, setButtonClicked] = useState(false);
   const [cities, setCities] = useState([]);
   const [senderCity, setSenderCity] = useState("");
   const [receiverCity, setReceiverCity] = useState("");
-
-  // Parcel data state (added default cost as 10)
+  
   const [parcelData, setParcelData] = useState({
     sender_user_id: "",
     senderCity: "",
@@ -31,8 +30,26 @@ const AdminAddParcel = () => {
     cost: 10, // Default cost
   });
 
-  // Load cities from CSV
+  const router = useRouter(); // Initialize router for navigation
+
   useEffect(() => {
+    const role = localStorage.getItem("role");
+
+    // Redirect if not Admin
+    if (role !== "Admin") {
+      router.push("/login");
+    } else {
+      const storedUsername = localStorage.getItem("username");
+      const storedUserId = localStorage.getItem("userId");
+
+      if (storedUsername && storedUserId) {
+        setUsername(storedUsername);
+        setUserId(storedUserId);
+      } else {
+        console.error("User data not found in localStorage");
+      }
+    }
+
     const loadCities = async () => {
       try {
         fetch("/data/Indian_cities.csv")
@@ -45,13 +62,6 @@ const AdminAddParcel = () => {
         console.error("Error reading cities file:", error);
       }
     };
-
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
-      setUsername(storedUsername);
-    } else {
-      setUsername("Admin");
-    }
 
     loadCities();
   }, []);
@@ -66,6 +76,7 @@ const AdminAddParcel = () => {
     };
     setOrderDetails(orderData);
   };
+
   const calculateCost = async () => {
     const { weight, volume, senderCity, receiverCity } = parcelData;
 
@@ -73,10 +84,10 @@ const AdminAddParcel = () => {
       alert("Please fill in all required fields for cost calculation.");
       return;
     }
-    setButtonClicked(true) ;
+    setButtonClicked(true);
 
     try {
-      // Fetch lat-lon for sender and receiver cities (replace with your logic)
+      // Fetch lat-lon for sender and receiver cities
       const senderCoords = cities.find(city => city.City === senderCity);
       const receiverCoords = cities.find(city => city.City === receiverCity);
 
@@ -85,8 +96,7 @@ const AdminAddParcel = () => {
         return;
       }
 
-      // const dimensions = volume.split("x").map(Number); // Convert dimensions to array
-   const body = {
+      const body = {
         weight: parseFloat(weight),
         volume: parseFloat(volume),
         lat1: parseFloat(senderCoords.Latitude),
@@ -98,7 +108,6 @@ const AdminAddParcel = () => {
 
       const response = await fetch("/api/calculate-cost", {
         method: "POST",
-       
         body: JSON.stringify(body),
       });
 
@@ -115,140 +124,137 @@ const AdminAddParcel = () => {
     }
   };
 
+  const handleAddParcel = async () => {
+    const { sender_user_id, senderCity, weight, volume, preference, receiver_user_id, receiverCity, cost } = parcelData;
 
+    console.log("Current Parcel Data:", {
+        sender_user_id,
+        senderCity,
+        weight,
+        volume,
+        preference,
+        receiver_user_id,
+        receiverCity,
+        cost,
+    });
 
-const handleAddParcel = async () => {
-  const { sender_user_id, senderCity, weight, volume, preference, receiver_user_id, receiverCity, cost } = parcelData;
+    if (!sender_user_id || !senderCity || !weight || !volume || !preference || !receiver_user_id || !receiverCity || !cost) {
+        console.log("Missing fields detected");
+        alert("Please fill all the fields!");
+        return;
+    }
 
-  console.log("Current Parcel Data:", {
-      sender_user_id,
-      senderCity,
-      weight,
-      volume,
-      preference,
-      receiver_user_id,
-      receiverCity,
-      cost,
-  });
+    try {
+        console.log("Fetching email for sender_user_id:", sender_user_id);
 
-  if (!sender_user_id || !senderCity || !weight || !volume || !preference || !receiver_user_id || !receiverCity || !cost) {
-      console.log("Missing fields detected");
-      alert("Please fill all the fields!");
-      return;
-  }
+        // Fetch email from the users table
+        const emailResponse = await fetch("/api/get-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sender_user_id }),
+        });
 
-  try {
-      console.log("Fetching email for sender_user_id:", sender_user_id);
+        const emailData = await emailResponse.json();
+        if (!emailResponse.ok) {
+            alert(`Failed to fetch email: ${emailData.error}`);
+            return;
+        }
 
-      // Fetch email from the users table
-      const emailResponse = await fetch("/api/get-email", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sender_user_id }),
-      });
+        const senderEmail = emailData.email;
+        console.log("Sender Email fetched:", senderEmail);
 
-      const emailData = await emailResponse.json();
-      if (!emailResponse.ok) {
-          alert(`Failed to fetch email: ${emailData.error}`);
-          return;
-      }
+        // Send the parcel data to the order API
+        const response = await fetch("/api/order", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                sender_user_id,
+                senderCity,
+                weight,
+                volume,
+                preference,
+                receiver_user_id,
+                receiverCity,
+                cost,
+                userId,
+            }),
+        });
 
-      const senderEmail = emailData.email;
-      console.log("Sender Email fetched:", senderEmail);
+        const data = await response.json();
 
-      // Send the parcel data to the order API
-      const response = await fetch("/api/order", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-              sender_user_id,
-              senderCity,
-              weight,
-              volume,
-              preference,
-              receiver_user_id,
-              receiverCity,
-              cost,
-          }),
-      });
+        console.log("Server response:", data);
 
-      const data = await response.json();
+        if (response.ok) {
+            alert("Parcel added successfully!");
+            console.log("New Order ID:", data.orderId);
 
-      console.log("Server response:", data);
+            // Fetch and add route
+            try {
+                const routeResponse = await fetch("/api/routes", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        orderId: data.orderId, // Send the generated order ID
+                        senderCity: parcelData.senderCity,
+                        receiverCity: parcelData.receiverCity,
+                        weight: parcelData.weight, // Pass the order weight here
+                        preference: parcelData.preference,
+                    }),
+                });
 
-      if (response.ok) {
-          alert("Parcel added successfully!");
-          console.log("New Order ID:", data.orderId);
+                const routeData = await routeResponse.json();
+                console.log("Route API Response:", routeData);
 
-          // Fetch and add route
-          try {
-              const routeResponse = await fetch("/api/routes", {
-                  method: "POST",
-                  headers: {
-                      "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                      orderId: data.orderId, // Send the generated order ID
-                      senderCity: parcelData.senderCity,
-                      receiverCity: parcelData.receiverCity,
-                      weight: parcelData.weight, // Pass the order weight here
-                      preference: parcelData.preference,
-                  }),
-              });
+                if (routeResponse.ok) {
+                    alert(`Route added successfully: ${routeData.route}`);
+                } else {
+                    alert(routeData.error || "Error adding route");
+                }
+            } catch (error) {
+                console.error("Error fetching route:", error);
+                alert("Error fetching route, please try again.");
+            }
 
-              const routeData = await routeResponse.json();
-              console.log("Route API Response:", routeData);
+            // Send the email using the new API route for order confirmation
+            try {
+                const emailResult = await fetch('/api/send-order-confirmation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        senderEmail,
+                        sender_user_id,
+                        orderId: data.orderId,
+                        cost,
+                    }),
+                });
 
-              if (routeResponse.ok) {
-                  alert(`Route added successfully: ${routeData.route}`);
-              } else {
-                  alert(routeData.error || "Error adding route");
-              }
-          } catch (error) {
-              console.error("Error fetching route:", error);
-              alert("Error fetching route, please try again.");
-          }
-
-          // Send the email using the new API route for order confirmation
-          try {
-              const emailResult = await fetch('/api/send-order-confirmation', {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                      senderEmail,
-                      sender_user_id,
-                      orderId: data.orderId,
-                      cost,
-                  }),
-              });
-
-              const emailData = await emailResult.json();
-              if (emailResult.ok) {
-                  alert(`Order confirmation email sent to ${senderEmail}`);
-              } else {
-                  alert(`Failed to send email: ${emailData.message}`);
-              }
-          } catch (emailError) {
-              console.error("Error sending order confirmation email:", emailError);
-              alert("Error sending order confirmation email.");
-          }
-      } else {
-          alert(data.error || "Error adding parcel");
-      }
-  } catch (error) {
-      console.error("Error adding parcel:", error);
-      alert("Error adding parcel, please try again.");
-  }
+                const emailData = await emailResult.json();
+                if (emailResult.ok) {
+                    alert(`Order confirmation email sent to ${senderEmail}`);
+                } else {
+                    alert(`Failed to send email: ${emailData.message}`);
+                }
+            } catch (emailError) {
+                console.error("Error sending order confirmation email:", emailError);
+                alert("Error sending order confirmation email.");
+            }
+        } else {
+            alert(data.error || "Error adding parcel");
+        }
+    } catch (error) {
+        console.error("Error adding parcel:", error);
+        alert("Error adding parcel, please try again.");
+    }
 };
-
 
   return (
     <div className="flex flex-col bg-gray-100">
-      {/* Fixed Header and Navbar */}
       <header className="relative bg-white">
         <div className="flex items-center justify-center px-8 py-8 relative">
           <div className="absolute left-4">
@@ -260,14 +266,10 @@ const handleAddParcel = async () => {
         </div>
       </header>
       <Navbar />
-
-      {/* Main Content */}
       <main className="flex-grow container mx-auto px-4 py-6 grid grid-cols-2 gap-4">
-        {/* Left Section */}
         <div className="bg-white p-6 shadow-md rounded-lg">
           <h2 className="font-bold mb-4 text-lg">Add Parcel</h2>
           <div className="space-y-6">
-            {/* Sender Details */}
             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
               <div className="flex items-center space-x-4 mb-4">
                 <h3 className="font-semibold text-lg">Sender Details</h3>
@@ -279,7 +281,6 @@ const handleAddParcel = async () => {
                 value={parcelData.sender_user_id}
                 onChange={(e) => setParcelData({ ...parcelData, sender_user_id: e.target.value })}
               />
-              {/* City Dropdown for Sender */}
               <select
                 className="w-full border rounded px-3 py-2 mb-2"
                 value={parcelData.senderCity}
@@ -317,7 +318,6 @@ const handleAddParcel = async () => {
               </select>
             </div>
 
-            {/* Receiver Details */}
             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
               <div className="flex items-center space-x-4 mb-4">
                 <h3 className="font-semibold text-lg">Receiver Details</h3>
@@ -329,7 +329,6 @@ const handleAddParcel = async () => {
                 value={parcelData.receiver_user_id}
                 onChange={(e) => setParcelData({ ...parcelData, receiver_user_id: e.target.value })}
               />
-              {/* City Dropdown for Receiver */}
               <select
                 className="w-full border rounded px-3 py-2 mb-2"
                 value={parcelData.receiverCity}
@@ -362,7 +361,6 @@ const handleAddParcel = async () => {
           </div>
         </div>
 
-        {/* Right Section: Order Details */}
         <div className="bg-white p-6 shadow-md rounded-lg">
           <h2 className="font-bold mb-4 text-lg">Order Search</h2>
           <input
@@ -376,11 +374,12 @@ const handleAddParcel = async () => {
             onClick={handleOrderSearch}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
           >
-            Search
+            Search Order
           </button>
+
           {orderDetails && (
-            <div className="mt-4">
-              <h3 className="font-semibold text-lg">Order Details</h3>
+            <div className="mt-6 space-y-4">
+              <h3 className="text-lg font-semibold">Order Details</h3>
               <p><strong>Order ID:</strong> {orderDetails.orderId}</p>
               <p><strong>Location:</strong> {orderDetails.currentLocation}</p>
               <p><strong>Dispatch ID:</strong> {orderDetails.dispatchId}</p>
@@ -390,8 +389,6 @@ const handleAddParcel = async () => {
           )}
         </div>
       </main>
-
-      {/* Footer */}
       <Footer />
     </div>
   );

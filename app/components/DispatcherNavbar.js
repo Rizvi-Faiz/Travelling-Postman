@@ -29,7 +29,7 @@ const DispatcherNavbar = () => {
                     <Link href="/DispatcherDashboard" className="text-white hover:text-gray-300">
                         Home
                     </Link>
-                    <Link href="/contact-admin" className="text-white hover:text-gray-300">
+                    <Link href="/DispatcherAdminContact" className="text-white hover:text-gray-300">
                         Contact Admin
                     </Link>
                 </div>
