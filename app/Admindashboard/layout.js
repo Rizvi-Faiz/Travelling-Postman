@@ -1,35 +1,32 @@
-// layout.js
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 
 const AdminLayout = ({ children }) => {
+    useEffect(() => {
+        // Watson Assistant Chat Options
+        window.watsonAssistantChatOptions = {
+            integrationID: "ea607e2c-7266-401d-980b-71fff45d6903", // Replace with your integration ID
+            region: "au-syd", // Replace with your region
+            serviceInstanceID: "d6c3cf7b-5dcd-4242-b81c-f75a30e18f26", // Replace with your service instance ID
+            onLoad: async (instance) => {
+                await instance.render();
+            },
+        };
+
+        // Dynamically Load Watson Assistant Script
+        const script = document.createElement("script");
+        script.src = "https://web-chat.global.assistant.watson.appdomain.cloud/versions/latest/WatsonAssistantChatEntry.js";
+        script.async = true;
+        document.head.appendChild(script);
+
+        return () => {
+            // Cleanup script if necessary
+            document.head.removeChild(script);
+        };
+    }, []);
+
     return (
-        // <div className="min-h-screen bg-gray-100">
-        //     {/* Header */}
-        //     <header className="bg-red-700 text-white py-4">
-        //         <div className="container mx-auto flex items-center justify-between">
-        //             <div className="flex items-center">
-        //                 <img src="/Logo.png" alt="Travelling Postman Logo" className="h-16 mr-4" />
-        //                 <h1 className="text-2xl font-bold">Travelling Postman</h1>
-        //             </div>
-        //             <nav className="space-x-8">
-        //                 <a href="#" className="text-lg hover:underline">Home</a>
-        //                 <a href="#" className="text-lg hover:underline">Add/Manage Parcels</a>
-        //                 <a href="#" className="text-lg hover:underline">View Routes</a>
-        //                 <a href="#" className="text-lg hover:underline">Track Shipments</a>
-        //                 <a href="#" className="text-lg hover:underline">Reports</a>
-        //                 <a href="#" className="text-lg hover:underline text-yellow-300">Logout</a>
-        //             </nav>
-        //         </div>
-        //     </header>
-
-        //     {/* Content */}
-        //     <main className="container mx-auto py-8">{children}</main>
-
-        //     {/* Footer */}
-        //     <footer className="bg-red-700 text-white py-4 text-center">
-        //         <p>Contact Support Number: +91 (719) 581-7902</p>
-        //     </footer>
-        // </div>
         <html lang="en">
             <body>
                 {children}
