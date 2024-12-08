@@ -17,6 +17,7 @@
     "chartjs": "^0.3.24",
     "cookie": "^1.0.2",
     "cors": "^2.8.5",
+    "csv-parser": "^3.0.0",
     "dotenv": "^16.4.5",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
@@ -29,6 +30,7 @@
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-leaflet": "^5.0.0-rc.1",
+    "resend": "^4.0.1",
     "travelling-postman": "file:"
   },
   "devDependencies": {
