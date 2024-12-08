@@ -28,6 +28,8 @@
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-leaflet": "^5.0.0-rc.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "travelling-postman": "file:"
   },
   "devDependencies": {
