@@ -11,7 +11,6 @@
     };
     spinner();
     
-    
     // Initiate the wowjs
     new WOW().init();
 
@@ -111,4 +110,17 @@
     });
     
 })(jQuery);
+
+document.addEventListener("DOMContentLoaded", () => {
+    const spinner = document.getElementById("spinner");
+    const content = document.getElementById("content");
+
+    setTimeout(() => {
+        spinner.style.opacity = "0"; // Fade out spinner
+        setTimeout(() => {
+            spinner.style.display = "none"; // Hide spinner
+            content.style.display = "block"; // Show page content
+        }, 500); // Match the fade-out duration
+    }, 3000); // Adjust this duration as per your needs
+});
 
