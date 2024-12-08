@@ -2,6 +2,9 @@
 import React from "react";
 import { useRouter } from "next/navigation"; 
 import IndiaMap from "./components/IndiaMap";
+// _app.js
+// import './globals.css'; // Ensure global.css is imported
+
 
 function HomePage() {
   const router = useRouter(); 
