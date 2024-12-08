@@ -1,5 +1,7 @@
 import { query } from '@/lib/db';
 
+
+
 export async function GET(req) {
     const url = new URL(req.url);
     const dispatcherId = url.searchParams.get('dispatcherId');
@@ -14,20 +16,21 @@ export async function GET(req) {
     try {
         const result = await query(
             `SELECT
-                a.Current_Address AS Current_Location,
+                a.current_address AS "currentAddress",
                 r.source,
                 r.destination,
                 r.path
             FROM
-                Assignment a
+                assignment a
             JOIN
-                Routes r
+                routes r
             ON
-                a.Dispatcher_ID = r.dispatcher_id
+                a.dispatcher_id = r.dispatcher_id
             WHERE
-                a.Dispatcher_ID = $1;`, // Use $1 as a placeholder for the parameter
-            [dispatcherId] // Pass the dispatcherId as the parameter
-        );
+                a.dispatcher_id = $1;`,
+            [dispatcherId]
+        );  
+        console.log(result)
 
         if (result.rows.length > 0) {
             return new Response(JSON.stringify({ success: true, routeDetails: result.rows[0] }), {
