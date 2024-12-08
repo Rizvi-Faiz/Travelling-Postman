@@ -80,7 +80,7 @@ def process_route(source, destination, path):
     return results
 
 # Load and process routes
-routes_df = pd.read_csv("C:\\Users\\Admin\\OneDrive\\Documents\\VSCode Practice\\Travelling-Postman\\public\\data\\multi_modal_top_5_routes.csv")
+routes_df = pd.read_csv("./public/data/multi_modal_top_5_routes.csv")
 
 user_source = input("Enter the source city: ").strip()
 user_destination = input("Enter the destination city: ").strip()
@@ -102,7 +102,7 @@ else:
     if results:
         results_df = pd.DataFrame(results)
         print(results_df)
-        results_df.to_csv("C:\\Users\\Admin\\OneDrive\\Documents\\VSCode Practice\\Travelling-Postman\\public\\data\\Safety_Analysis_Routes.csv", index=False)
+        results_df.to_csv("./public/data/Safety_Analysis_Routes.csv", index=False)
         print("Safety analysis saved to Safety_Analysis_Routes.csv.")
     else:
         print("No safety analysis results to process.")
