@@ -6,7 +6,7 @@ import withAuth from "@/lib/withAuth";
 import Logo from "/public/Logo.png";
 import Image from "next/image";
 import Papa from "papaparse";
-  import { SendOrderConfirmationEmail } from "@/helpers/SendOrderConfirmationEmail";
+import { SendOrderConfirmationEmail } from "@/helpers/SendOrderConfirmationEmail";
 
 const AdminAddParcel = () => {
   const [username, setUsername] = useState("");

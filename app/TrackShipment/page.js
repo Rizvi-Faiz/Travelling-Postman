@@ -14,6 +14,8 @@ const TrackShipment = () => {
     const [dispatcherId, setDispatcherId] = useState("");
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [selectedRoute, setSelectedRoute] = useState(null); // Track selected route
+    const [mapData,setMapData]=useState(null);
+    const [alternateRoutes,setAlternateRoutes]=useState(null);
 
     const route = useRouter();
 
@@ -43,17 +45,43 @@ const TrackShipment = () => {
         setDispatcherId(e.target.value);
     };
 
-    const handleConsignment = () => {
+    const handleConsignment = async () => {
         if (dispatcherId.trim() === '') {
             alert('Please enter a tracking ID');
         } else {
-            setIdEnter(true);
+            try {
+                const response = await fetch(`/api/getRouteDetails?dispatcherId=${dispatcherId}`);
+                const data = await response.json();
+                if (data.success) {
+                    const { currentAddress, source, destination,path } = data.routeDetails;
+                    console.log("Current Address ",currentAddress);
+                    setIdEnter(true);
+                    setMapData({ source, destination, currentAddress });
+                } else {
+                    alert(data.message || 'Failed to fetch route details.');
+                }
+            } catch (error) {
+                console.error('Error fetching route details:', error);
+            }
         }
     };
 
-    const handleRoute = () => {
-        setReroute(true);
+
+    const handleRoute = async () => {
+        try {
+            const response = await fetch(`/api/getAlternateRoutes?source=${mapData.source}&destination=${mapData.destination}`);
+            const data = await response.json();
+            if (data.success) {
+                setAlternateRoutes(data.routes);
+                setReroute(true);
+            } else {
+                alert(data.message || 'Failed to fetch alternate routes.');
+            }
+        } catch (error) {
+            console.error('Error fetching alternate routes:', error);
+        }
     };
+
 
     const handleCheckboxChange = (route) => {
         setSelectedRoute((prevRoute) => (prevRoute === route ? null : route));
@@ -88,11 +116,16 @@ const TrackShipment = () => {
                         {/* <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
                             <span>Map (integrate with actual map API)</span>
                         </div> */}
-                            <section className="w-full p-4 border border-gray-300">
-                               <IndiaMap/>
-                            </section>
-                        
-                        <p>Current route : A - B - D</p>
+                        <section className="w-full p-4 border border-gray-300">
+                            <IndiaMap
+                                source={mapData?.source}
+                                destination={mapData?.destination}
+                                currentAddress={mapData?.currentAddress}
+                            />
+
+                        </section>
+
+                        <p>Current route : {} </p>
                     </div>
 
                     <div className="w-full md:w-1/2 p-4 flex flex-col items-center">
@@ -117,7 +150,7 @@ const TrackShipment = () => {
                             <div className="w-full flex flex-row justify-between items-center mb-4">
                                 <div className="flex flex-row items-center space-x-2">
                                     <h2 className="font-semibold">Current Location:</h2>
-                                    <p className="font-bold text-gray-800">Mumbai</p>
+                                    <p className="font-bold text-gray-800">{mapData.currentAddress}</p>
                                 </div>
                                 <button
                                     onClick={handleRoute}
@@ -139,7 +172,7 @@ const TrackShipment = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {[
+                                        {/* {[
                                             { route: "C.L. - A - C - Dest.", eta: "+1 Day", cost: "+Rs.50" },
                                             { route: "C.L. - B - E - C - Dest.", eta: "+2 Days", cost: "+Rs.150" },
                                             { route: "C.L. - A - F - E - C - Dest.", eta: "+3 Days", cost: "+Rs.75" },
@@ -156,6 +189,22 @@ const TrackShipment = () => {
                                                 <td className="p-2 border-r border-gray-300">{item.route}</td>
                                                 <td className="p-2 border-r border-gray-300">{item.eta}</td>
                                                 <td className="p-2 border-r border-gray-300">{item.cost}</td>
+                                            </tr>
+                                        ))} */}
+
+                                        {alternateRoutes.map((route, index) => (
+                                            <tr key={index}>
+                                                <td className="p-2 border-r border-gray-300">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="form-checkbox"
+                                                        checked={selectedRoute === route.path}
+                                                        onChange={() => handleCheckboxChange(route.path)}
+                                                    />
+                                                </td>
+                                                <td className="p-2 border-r border-gray-300">{route.path}</td>
+                                                <td className="p-2 border-r border-gray-300">{route.duration}</td>
+                                                <td className="p-2 border-r border-gray-300">{route.cost}</td>
                                             </tr>
                                         ))}
                                     </tbody>
