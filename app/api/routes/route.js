@@ -96,6 +96,7 @@ export async function POST(req) {
 
     const routeCheckQuery = `
       SELECT * FROM routes WHERE source = $1 AND destination = $2 AND path = $3
+      ORDER BY current_capacity ASC
     `;
     const routeCheckResult = await db.query(routeCheckQuery, [
       senderCity,
@@ -179,47 +180,107 @@ export async function POST(req) {
           { status: 201 }
         );
       } else {
-        const updateRouteQuery = `
-          UPDATE routes
-          SET current_capacity = $1
-          WHERE source = $2 AND destination = $3 AND path = $4
-        `;
-        await db.query(updateRouteQuery, [
-          newCapacity,
-          senderCity,
-          receiverCity,
-          selectedRoute.path,
-        ]);
-        console.log("Debug: Updated Existing Route Capacity");
-
-        const assignmentQuery = `
-          INSERT INTO assignment (
-            order_id, dispatcher_id, current_address, pickup_time, drop_address, drop_time, delay, status
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        `;
-        const assignmentValues = [
-          orderId,
-          existingRoute.dispatcher_id,
-          senderCity,
-          null,
-          receiverCity,
-          null,
-          null,
-          null,
-        ];
-        await db.query(assignmentQuery, assignmentValues);
-        console.log("Debug: Assignment Created for Updated Route");
-
-        return new Response(
-          JSON.stringify({
-            message: "Route capacity updated successfully",
-            route: selectedRoute.path,
-            cost: selectedRoute.cost,
-            dispatcherId: existingRoute.dispatcher_id,
-          }),
-          { status: 200 }
-        );
+        try {
+          // Select the earliest created route satisfying the condition
+          const selectRouteQuery = `
+            SELECT *
+            FROM routes
+            WHERE source = $1 AND destination = $2 AND path = $3
+            ORDER BY current_capacity ASC
+            LIMIT 1
+          `;
+          
+          const routeResult = await db.query(selectRouteQuery, [
+            senderCity,
+            receiverCity,
+            selectedRoute.path,
+          ]);
+      
+          if (routeResult.rows.length === 0) {
+            console.error("No matching route found");
+            return new Response(
+              JSON.stringify({ error: "No matching route found" }),
+              { status: 404 }
+            );
+          }
+      
+          const routeToUpdate = routeResult.rows[0];
+      
+          console.log("Selected Route to Update:", routeToUpdate);
+      
+          // Validate values before updating
+          console.log(
+            "Update Parameters:", {
+              newCapacity,
+              // routeToUpdate.route_id
+            }
+          );
+      
+          // Update only the selected route
+          const updateRouteQuery = `
+            UPDATE routes
+            SET current_capacity = $1
+            WHERE route_id=$2
+          `;
+          
+          const updateResult = await db.query(updateRouteQuery, [
+            newCapacity,
+            routeToUpdate.route_id
+          ]);
+      
+          console.log("Update Result:", updateResult);
+      
+          if (updateResult.rowCount === 0) {
+            console.error("Failed to update route capacity");
+            return new Response(
+              JSON.stringify({ error: "Failed to update route capacity" }),
+              { status: 500 }
+            );
+          }
+      
+          console.log("Debug: Updated Existing Route Capacity");
+      
+          // Create an assignment for the updated route
+          const assignmentQuery = `
+            INSERT INTO assignment (
+              order_id, dispatcher_id, current_address, pickup_time, drop_address, drop_time, delay, status
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+          `;
+          const assignmentValues = [
+            orderId,
+            routeToUpdate.dispatcher_id,
+            senderCity,
+            null, // Pickup time (can be replaced with actual time)
+            receiverCity,
+            null, // Drop time (can be replaced with actual time)
+            null, // Delay
+            null, // Status
+          ];
+          
+          await db.query(assignmentQuery, assignmentValues);
+          console.log("Debug: Assignment Created for Updated Route");
+      
+          return new Response(
+            JSON.stringify({
+              message: "Route capacity updated successfully",
+              route: routeToUpdate.path,
+              cost: routeToUpdate.cost,
+              dispatcherId: routeToUpdate.dispatcher_id,
+            }),
+            { status: 200 }
+          );
+        } catch (error) {
+          console.error("Error in route update or assignment creation:", error);
+          return new Response(
+            JSON.stringify({ error: "Internal Server Error" }),
+            { status: 500 }
+          );
+        }
       }
+      
+      
+      
+      
     } else {
       const dispatcherQuery = `
         SELECT * FROM dispatcher
