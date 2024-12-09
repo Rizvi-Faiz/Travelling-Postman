@@ -23,7 +23,7 @@ export async function GET(req) {
             fs.createReadStream(csvFilePath)
                 .pipe(csv())
                 .on('data', (row) => {
-                    if (row.startCity === source && row.endCity === destination) {
+                    if (row.startcity === source && row.endcity === destination) {
                         // Collect all paths, costs, and times
                         for (let i = 1; i <= 5; i++) {
                             if (row[`Route ${i}`]) {
