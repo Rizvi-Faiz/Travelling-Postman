@@ -15,7 +15,7 @@ export async function GET(req) {
     }
 
     // Correct the file path using path.join to ensure proper format
-    const csvFilePath = path.join('public', 'data', 'multi_modal_top_5_routes.csv'); // Make sure the file is located correctly in the public/data folder
+    const csvFilePath = path.join('public', 'data', 'multi_modal_top_5_routes_cost.csv'); // Make sure the file is located correctly in the public/data folder
 
     try {
         const routes = await new Promise((resolve, reject) => {
@@ -23,14 +23,14 @@ export async function GET(req) {
             fs.createReadStream(csvFilePath)
                 .pipe(csv())
                 .on('data', (row) => {
-                    if (row.Source === source && row.Destination === destination) {
+                    if (row.startCity === source && row.endCity === destination) {
                         // Collect all paths, costs, and times
                         for (let i = 1; i <= 5; i++) {
-                            if (row[`Path${i}`]) {
+                            if (row[`Route ${i}`]) {
                                 results.push({
-                                    path: row[`Path${i}`],
-                                    cost: parseFloat(row[`Cost${i}`]),
-                                    duration: parseFloat(row[`Time${i}`]),
+                                    path: row[`Route ${i}`],
+                                    cost: parseFloat(row[`Cost ${i}`]),
+                                    duration: parseFloat(row[`Time ${i}`]),
                                 });
                             }
                         }
