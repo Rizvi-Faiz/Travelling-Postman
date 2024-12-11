@@ -345,7 +345,7 @@ const AdminAddParcel = () => {
             <div className="flex items-center space-x-4">
               <button
                 onClick={calculateCost}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800 transition-colors"
               >
                 Calculate Cost
               </button>
