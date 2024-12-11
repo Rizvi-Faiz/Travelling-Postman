@@ -172,7 +172,7 @@ const AdminAddParcel = () => {
           <div className="flex justify-center">
             <button
               onClick={handleOrderSearch}
-              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors"
+              className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
             >
               Search Order
             </button>
@@ -180,20 +180,20 @@ const AdminAddParcel = () => {
 
           {orderDetails && orderDetails.length > 0 && (
             <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-4">Order Details</h3>
+              <h3 className="text-lg font-semibold mb-4">Orders From {senderId} To {receiverId}</h3>
               <table className="table-auto w-full border-collapse border border-gray-300">
                 <thead>
                   <tr className="bg-gray-200">
                     <th className="border border-gray-300 px-4 py-2">Order ID</th>
                     <th className="border border-gray-300 px-4 py-2">Weight</th>
                     <th className="border border-gray-300 px-4 py-2">Volume</th>
-                    <th className="border border-gray-300 px-4 py-2">Preference</th>
+                    <th className="border border-gray-300 px-4 py-2">Type of Service</th>
                     <th className="border border-gray-300 px-4 py-2">Cost</th>
                     <th className="border border-gray-300 px-4 py-2">Assigned</th> {/* New Assigned Column */}
                   </tr>
                 </thead>
                 <tbody>
-                  {orderDetails.map((order) => (
+                  {orderDetails.map((order,index) => (
                     <tr key={order.orderId}>
                       <td className="border border-gray-300 px-4 py-2">{order.order_id}</td>
                       <td className="border border-gray-300 px-4 py-2">{order.weight}</td>
@@ -213,7 +213,7 @@ const AdminAddParcel = () => {
           <div className="mt-4 flex justify-center">
             <button
               onClick={handleAssignOrders}
-              className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition-colors"
+              className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
               disabled={isLoading} // Disable while loading
             >
               {isLoading ? "Assigning..." : "Assign Orders"}
