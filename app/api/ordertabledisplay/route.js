@@ -20,7 +20,7 @@ export async function POST(req) {
       FROM orders
       WHERE current_sender_location = $1 
         AND current_receiver_location = $2
-        AND status = 'pending';  -- Filter by status 'pending'
+        AND status = 'Pending';  -- Filter by status 'pending'
     `;
 
     const values = [senderCity, receiverCity];
