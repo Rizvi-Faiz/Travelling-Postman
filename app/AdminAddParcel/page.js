@@ -254,7 +254,7 @@ const AdminAddParcel = () => {
   };
 
   return (
-    <div className="flex flex-col bg-gray-100">
+    <div className="h-full flex flex-col bg-gray-100">
       <header className="relative bg-white">
         <div className="flex items-center justify-center px-8 py-8 relative">
           <div className="absolute left-4">
