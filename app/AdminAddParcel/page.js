@@ -64,7 +64,7 @@ const AdminAddParcel = () => {
       const senderCityName = senderCityObj.City;
       const receiverCityName = receiverCityObj.City;
 
-      const response = await fetch("/api/Ordertabledisplay", {
+      const response = await fetch("/api/ordertabledisplay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
