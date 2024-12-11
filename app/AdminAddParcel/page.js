@@ -15,6 +15,7 @@ const AdminAddParcel = () => {
   const [receiverId, setReceiverId] = useState("");
   const [orderDetails, setOrderDetails] = useState([]);
   const [cities, setCities] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // Loading state for the button
 
   const router = useRouter();
 
@@ -62,7 +63,7 @@ const AdminAddParcel = () => {
 
       const senderCityName = senderCityObj.City;
       const receiverCityName = receiverCityObj.City;
-      console.log(senderCityName)
+
       const response = await fetch("/api/Ordertabledisplay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -83,7 +84,39 @@ const AdminAddParcel = () => {
       console.error("Error fetching orders:", error);
       alert("An error occurred while fetching orders. Please try again.");
     }
-    console.log()
+  };
+
+  const handleAssignOrders = async () => {
+    setIsLoading(true);
+    try {
+      const updatedOrders = await Promise.all(
+        orderDetails.map(async (order) => {
+          const response = await fetch("/api/routes", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              senderCity: order.sourceCity,
+              receiverCity: order.destinationCity,
+              preference: order.preference,
+              weight: order.weight,
+              orderId: order.orderId,
+            }),
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            return { ...order, assigned: "Placed" }; // Set assigned to Placed
+          } else {
+            return { ...order, assigned: "Not Placed" }; // Set assigned to Not Placed
+          }
+        })
+      );
+
+      setOrderDetails(updatedOrders); // Update the order details with the assigned status
+    } catch (error) {
+      console.error("Error assigning orders:", error);
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -132,6 +165,7 @@ const AdminAddParcel = () => {
               Search Order
             </button>
           </div>
+
           {orderDetails && orderDetails.length > 0 && (
             <div className="mt-6">
               <h3 className="text-lg font-semibold mb-4">Order Details</h3>
@@ -143,6 +177,7 @@ const AdminAddParcel = () => {
                     <th className="border border-gray-300 px-4 py-2">Volume</th>
                     <th className="border border-gray-300 px-4 py-2">Preference</th>
                     <th className="border border-gray-300 px-4 py-2">Cost</th>
+                    <th className="border border-gray-300 px-4 py-2">Assigned</th> {/* New Assigned Column */}
                   </tr>
                 </thead>
                 <tbody>
@@ -153,12 +188,25 @@ const AdminAddParcel = () => {
                       <td className="border border-gray-300 px-4 py-2">{order.volume}</td>
                       <td className="border border-gray-300 px-4 py-2">{order.preference}</td>
                       <td className="border border-gray-300 px-4 py-2">{order.cost}</td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        {order.assigned || "Not Assigned"}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           )}
+
+          <div className="mt-4 flex justify-center">
+            <button
+              onClick={handleAssignOrders}
+              className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition-colors"
+              disabled={isLoading} // Disable while loading
+            >
+              {isLoading ? "Assigning..." : "Assign Orders"}
+            </button>
+          </div>
         </div>
       </main>
       <Footer />
