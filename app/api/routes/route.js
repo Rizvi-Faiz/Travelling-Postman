@@ -117,10 +117,10 @@ export async function POST(req) {
           WHERE current_location = $1
           AND dispatcher_id NOT IN (
             SELECT dispatcher_id FROM routes
-            WHERE source = $1 AND destination = $2
+            WHERE source = $1
           )
         `;
-        const dispatcherResult = await db.query(dispatcherQuery, [senderCity, receiverCity]);
+        const dispatcherResult = await db.query(dispatcherQuery, [senderCity]);
 
         if (dispatcherResult.rows.length === 0) {
           console.error("Debug: No Available Dispatcher");

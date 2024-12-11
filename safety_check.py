@@ -23,14 +23,17 @@ def fetch_news(city, keywords, cache):
         return cache[city]
     url = f"https://newsdata.io/api/1/latest?apikey={NEWS_API_KEY}&q={city}"
     response = requests.get(url)
-    data = response.json()
-    articles = [
-        article["title"]
-        for article in data.get("results", [])
-        if any(keyword in article["title"].lower() for keyword in keywords)
-    ]
-    cache[city] = articles
-    return articles
+    if response.status_code == 200:
+        data = response.json()
+        articles = [
+            article["title"]
+            for article in data.get("results", [])
+            if any(keyword in article["title"].lower() for keyword in keywords)
+        ]
+        cache[city] = articles
+    else:
+        cache[city] = []
+    return cache[city]
 
 def calculate_safety_index(weather, news):
     index = 100
@@ -44,65 +47,42 @@ def calculate_safety_index(weather, news):
 def check_safety(index):
     return "Safe" if index >= 70 else "Unsafe"
 
-def parse_path_with_modes(path):
-    segments = [segment.split("(") for segment in path.split(")") if segment]
-    return [(segment[0], [segment[1].lower()] if len(segment) > 1 else []) for segment in segments]
-
-def process_route(source, destination, path):
-    nodes_modes = parse_path_with_modes(path)
+def process_cities(cities):
     results = []
-
     weather_cache = {}
     news_cache = {}
-
-    for node, modes in nodes_modes:
-        for mode in modes:
-            if mode == "air":
-                keywords = ["thunderstorm", "high aqi", "fog", "fires"]
-            elif mode in ["road", "rail"]:
-                keywords = ["cyclone", "floods", "earthquakes", "road blockage", "protests", "fog", "fires"]
-            else:
-                continue
-
-            weather = fetch_weather(node, weather_cache)
-            news = fetch_news(node, keywords, news_cache)
-
-            safety_index = calculate_safety_index(weather, news)
-            results.append({
-                "City": node,
-                "Mode": mode,
-                "Safety Index": safety_index,
-                "Status": check_safety(safety_index),
-                "Weather Info": weather,
-                "News Articles": "; ".join(news) if news else "No relevant news",
-            })
-
+    
+    keywords = [
+        "cyclone", "floods", "earthquakes", "road blockage", "protests", "fog", "fires", "thunderstorm",
+        "heavy rain", "high rain", "yellow alert", "red alert", "orange alert", "landslide", "storm surge", "hailstorm",
+        "extreme heat", "drought", "severe weather"
+    ]
+    
+    for city in cities:
+        weather = fetch_weather(city, weather_cache)
+        news = fetch_news(city, keywords, news_cache)
+        
+        safety_index = calculate_safety_index(weather, news)
+        results.append({
+            "City": city,
+            "Safety Index": safety_index,
+            "Status": check_safety(safety_index),
+            "Weather Info": weather,
+            "News Articles": "; ".join(news) if news else "No relevant news",
+        })
     return results
 
-# Load and process routes
-routes_df = pd.read_csv("./public/data/multi_modal_top_5_routes.csv")
+# Input array of cities
+cities = ['Chennai', 'Goregaon', 'Delhi']
 
-user_source = input("Enter the source city: ").strip()
-user_destination = input("Enter the destination city: ").strip()
+# Process safety for each city
+results = process_cities(cities)
 
-filtered_routes = routes_df[
-    (routes_df["Source"] == user_source) & (routes_df["Destination"] == user_destination)
-]
-
-if filtered_routes.empty:
-    print(f"No routes found for Source: {user_source} and Destination: {user_destination}.")
+# Save results to CSV
+if results:
+    results_df = pd.DataFrame(results)
+    print(results_df)
+    results_df.to_csv(r"C:\\Users\\Admin\\OneDrive\\Documents\\VSCode Practice\\Travelling-Postman\\public\\data\\Safety_Analysis_Routes.csv", index=False)
+    print("Safety analysis saved to Safety_Analysis_Routes.csv.")
 else:
-    results = []
-    for _, row in filtered_routes.iterrows():
-        # Process only Path1
-        path = row["Path1"]
-        if not pd.isna(path):
-            results.extend(process_route(user_source, user_destination, path))
-
-    if results:
-        results_df = pd.DataFrame(results)
-        print(results_df)
-        results_df.to_csv("./public/data/Safety_Analysis_Routes.csv", index=False)
-        print("Safety analysis saved to Safety_Analysis_Routes.csv.")
-    else:
-        print("No safety analysis results to process.")
+    print("No safety analysis results to process.")
