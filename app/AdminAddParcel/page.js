@@ -18,7 +18,7 @@ const AdminAddParcel = () => {
   const [cities, setCities] = useState([]);
   const [senderCity, setSenderCity] = useState("");
   const [receiverCity, setReceiverCity] = useState("");
-  
+
   const [parcelData, setParcelData] = useState({
     sender_user_id: "",
     senderCity: "",
@@ -128,130 +128,130 @@ const AdminAddParcel = () => {
     const { sender_user_id, senderCity, weight, volume, preference, receiver_user_id, receiverCity, cost } = parcelData;
 
     console.log("Current Parcel Data:", {
-        sender_user_id,
-        senderCity,
-        weight,
-        volume,
-        preference,
-        receiver_user_id,
-        receiverCity,
-        cost,
+      sender_user_id,
+      senderCity,
+      weight,
+      volume,
+      preference,
+      receiver_user_id,
+      receiverCity,
+      cost,
     });
 
     if (!sender_user_id || !senderCity || !weight || !volume || !preference || !receiver_user_id || !receiverCity || !cost) {
-        console.log("Missing fields detected");
-        alert("Please fill all the fields!");
-        return;
+      console.log("Missing fields detected");
+      alert("Please fill all the fields!");
+      return;
     }
 
     try {
-        console.log("Fetching email for sender_user_id:", sender_user_id);
+      console.log("Fetching email for sender_user_id:", sender_user_id);
 
-        // Fetch email from the users table
-        const emailResponse = await fetch("/api/get-email", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ sender_user_id }),
-        });
+      // Fetch email from the users table
+      const emailResponse = await fetch("/api/get-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sender_user_id }),
+      });
 
-        const emailData = await emailResponse.json();
-        if (!emailResponse.ok) {
-            alert(`Failed to fetch email: ${emailData.error}`);
-            return;
-        }
+      const emailData = await emailResponse.json();
+      if (!emailResponse.ok) {
+        alert(`Failed to fetch email: ${emailData.error}`);
+        return;
+      }
 
-        const senderEmail = emailData.email;
-        console.log("Sender Email fetched:", senderEmail);
+      const senderEmail = emailData.email;
+      console.log("Sender Email fetched:", senderEmail);
 
-        // Send the parcel data to the order API
-        const response = await fetch("/api/order", {
+      // Send the parcel data to the order API
+      const response = await fetch("/api/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sender_user_id,
+          senderCity,
+          weight,
+          volume,
+          preference,
+          receiver_user_id,
+          receiverCity,
+          cost,
+          userId,
+        }),
+      });
+
+      const data = await response.json();
+
+      console.log("Server response:", data);
+
+      if (response.ok) {
+        alert("Parcel added successfully!");
+        console.log("New Order ID:", data.orderId);
+
+        // Fetch and add route
+        try {
+          const routeResponse = await fetch("/api/routes", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                sender_user_id,
-                senderCity,
-                weight,
-                volume,
-                preference,
-                receiver_user_id,
-                receiverCity,
-                cost,
-                userId,
+              orderId: data.orderId, // Send the generated order ID
+              senderCity: parcelData.senderCity,
+              receiverCity: parcelData.receiverCity,
+              weight: parcelData.weight, // Pass the order weight here
+              preference: parcelData.preference,
             }),
-        });
+          });
 
-        const data = await response.json();
+          const routeData = await routeResponse.json();
+          console.log("Route API Response:", routeData);
 
-        console.log("Server response:", data);
-
-        if (response.ok) {
-            alert("Parcel added successfully!");
-            console.log("New Order ID:", data.orderId);
-
-            // Fetch and add route
-            try {
-                const routeResponse = await fetch("/api/routes", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        orderId: data.orderId, // Send the generated order ID
-                        senderCity: parcelData.senderCity,
-                        receiverCity: parcelData.receiverCity,
-                        weight: parcelData.weight, // Pass the order weight here
-                        preference: parcelData.preference,
-                    }),
-                });
-
-                const routeData = await routeResponse.json();
-                console.log("Route API Response:", routeData);
-
-                if (routeResponse.ok) {
-                    alert(`Route added successfully: ${routeData.route}`);
-                } else {
-                    alert(routeData.error || "Error adding route");
-                }
-            } catch (error) {
-                console.error("Error fetching route:", error);
-                alert("Error fetching route, please try again.");
-            }
-
-            // Send the email using the new API route for order confirmation
-            try {
-                const emailResult = await fetch('/api/send-order-confirmation', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        senderEmail,
-                        sender_user_id,
-                        orderId: data.orderId,
-                        cost,
-                    }),
-                });
-
-                const emailData = await emailResult.json();
-                if (emailResult.ok) {
-                    alert(`Order confirmation email sent to ${senderEmail}`);
-                } else {
-                    alert(`Failed to send email: ${emailData.message}`);
-                }
-            } catch (emailError) {
-                console.error("Error sending order confirmation email:", emailError);
-                alert("Error sending order confirmation email.");
-            }
-        } else {
-            alert(data.error || "Error adding parcel");
+          if (routeResponse.ok) {
+            alert(`Route added successfully: ${routeData.route}`);
+          } else {
+            alert(routeData.error || "Error adding route");
+          }
+        } catch (error) {
+          console.error("Error fetching route:", error);
+          alert("Error fetching route, please try again.");
         }
+
+        // Send the email using the new API route for order confirmation
+        try {
+          const emailResult = await fetch('/api/send-order-confirmation', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              senderEmail,
+              sender_user_id,
+              orderId: data.orderId,
+              cost,
+            }),
+          });
+
+          const emailData = await emailResult.json();
+          if (emailResult.ok) {
+            alert(`Order confirmation email sent to ${senderEmail}`);
+          } else {
+            alert(`Failed to send email: ${emailData.message}`);
+          }
+        } catch (emailError) {
+          console.error("Error sending order confirmation email:", emailError);
+          alert("Error sending order confirmation email.");
+        }
+      } else {
+        alert(data.error || "Error adding parcel");
+      }
     } catch (error) {
-        console.error("Error adding parcel:", error);
-        alert("Error adding parcel, please try again.");
+      console.error("Error adding parcel:", error);
+      alert("Error adding parcel, please try again.");
     }
-};
+  };
 
   return (
     <div className="flex flex-col bg-gray-100">
@@ -266,8 +266,10 @@ const AdminAddParcel = () => {
         </div>
       </header>
       <Navbar />
-      <main className="flex-grow container mx-auto px-4 py-6 grid grid-cols-2 gap-4">
-        <div className="bg-white p-6 shadow-md rounded-lg">
+
+      {/* <main className="flex-grow container mx-auto px-4 py-6 grid grid-cols-2 gap-4">
+      <h1>Sorting Hub</h1> */}
+        {/* <div className="bg-white p-6 shadow-md rounded-lg">
           <h2 className="font-bold mb-4 text-lg">Add Parcel</h2>
           <div className="space-y-6">
             <div className="bg-gray-100 p-4 rounded-lg shadow-md">
@@ -359,24 +361,36 @@ const AdminAddParcel = () => {
               Add Parcel
             </button>
           </div>
-        </div>
-
-        <div className="bg-white p-6 shadow-md rounded-lg">
-          <h2 className="font-bold mb-4 text-lg">Order Search</h2>
-          <input
-            type="text"
-            className="w-full border rounded px-3 py-2 mb-4"
-            placeholder="Search Order ID"
-            value={orderId}
-            onChange={(e) => setOrderId(e.target.value)}
-          />
-          <button
-            onClick={handleOrderSearch}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-          >
-            Search Order
-          </button>
-
+        </div> */}
+        {/* <div className="w-full bg-white p-6 shadow-md rounded-lg">
+          <div className="flex flex-row">
+            <div className="w-1/2">
+              <h2 className=" font-bold mb-4 text-lg">From</h2>
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2 mb-4"
+                placeholder="Search Order ID"
+                value={orderId}
+                onChange={(e) => setOrderId(e.target.value)}
+              />
+            </div>
+            <div className="w-1/2">
+              <h2 className="w-1/2 font-bold mb-4 text-lg">To</h2>
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2 mb-4"
+                placeholder="Search Order ID"
+                value={orderId}
+                onChange={(e) => setOrderId(e.target.value)}
+              />
+            </div>
+          </div>
+              <button
+                onClick={handleOrderSearch}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+              >
+                Search Order
+              </button>
           {orderDetails && (
             <div className="mt-6 space-y-4">
               <h3 className="text-lg font-semibold">Order Details</h3>
@@ -388,7 +402,54 @@ const AdminAddParcel = () => {
             </div>
           )}
         </div>
+      </main>  */}
+
+      <main className="flex-grow container mx-auto px-4 py-6 grid grid-cols-1 gap-4">
+        <div className="w-full bg-white p-6 shadow-md rounded-lg">
+          <h1 className="font-bold text-2xl text-center mb-6">Sorting Hub</h1>
+          <div className="flex flex-row mb-6 justify-center">
+            <div className=" px-2">
+              <h2 className="font-bold mb-2 text-lg">From</h2>
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2"
+                placeholder="Search Order ID"
+                value={orderId}
+                onChange={(e) => setOrderId(e.target.value)}
+              />
+            </div>
+            <div className="w px-2">
+              <h2 className="font-bold mb-2 text-lg">To</h2>
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2"
+                placeholder="Search Order ID"
+                value={orderId}
+                onChange={(e) => setOrderId(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex justify-center">
+            <button
+              onClick={handleOrderSearch}
+              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors"
+            >
+              Search Order
+            </button>
+          </div>
+          {orderDetails && (
+            <div className="mt-6 space-y-4">
+              <h3 className="text-lg font-semibold">Order Details</h3>
+              <p><strong>Order ID:</strong> {orderDetails.orderId}</p>
+              <p><strong>Weight:</strong> {orderDetails.currentLocation}</p>
+              <p><strong>Volume</strong> {orderDetails.dispatchId}</p>
+              <p><strong>Type of Service</strong> {orderDetails.eta}</p>
+              <p><strong>xreated At</strong> {orderDetails.contact}</p>
+            </div>
+          )}
+        </div>
       </main>
+
       <Footer />
     </div>
   );

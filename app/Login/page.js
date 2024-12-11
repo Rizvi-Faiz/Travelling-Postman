@@ -295,9 +295,9 @@ export default function Login() {
                 <option value="" disabled>
                   Select a role
                 </option>
-                <option value="User">User</option>
-                <option value="Admin">Admin</option>
-                <option value="Dispatcher">Dispatcher</option>
+                <option value="User">Customer</option>
+                <option value="Admin">Sorting Hub Admin</option>
+                <option value="Dispatcher">Transport Agency</option>
               </select>
             </div>
 
