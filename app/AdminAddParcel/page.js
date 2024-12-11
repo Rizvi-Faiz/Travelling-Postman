@@ -110,7 +110,7 @@ const AdminAddParcel = () => {
               senderCity: senderCityName,
               receiverCity: receiverCityName,
               preference: order.preference,
-              weight: order.weight,
+              weight: Number(order.weight), // Convert weight to a number
               orderId: order.order_id,
             }),
           });

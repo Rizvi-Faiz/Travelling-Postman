@@ -6,7 +6,9 @@ import path from "path";
 export async function POST(req) {
   try {
     const { senderCity, receiverCity, preference, weight, orderId } = await req.json();
+
     console.log("Debug: Request JSON:", { senderCity, receiverCity, preference, weight, orderId });
+    console.log("Type of weight:", typeof weight);
 
     if (!senderCity || !receiverCity || !preference || !weight || !orderId) {
       console.error("Debug: Missing Required Fields");
@@ -58,7 +60,7 @@ export async function POST(req) {
         paths.push({ path, cost, time });
       }
     }
-    console.log("Debug: Extracted Paths and Costs:", paths);
+    // console.log("Debug: Extracted Paths and Costs:", paths);
 
     if (paths.length === 0) {
       return new Response(
@@ -69,12 +71,12 @@ export async function POST(req) {
 
     const isRouteSafe = (path) => {
         const nodes = path.split(/\s?\(road\)|\s?\(rail\)|\s?\(air\)/).map((node) => node.trim()).filter((node) => node !== '');     
-        console.log("Debug: Safety Check for Nodes:", nodes);
+        // console.log("Debug: Safety Check for Nodes:", nodes);
         return nodes.every((node) => true);
       };
       
       const safePaths = paths.filter((route) => isRouteSafe(route.path));
-      console.log("Debug: Safe Paths:", safePaths);
+      // console.log("Debug: Safe Paths:", safePaths);
       
 
     if (safePaths.length === 0) {
