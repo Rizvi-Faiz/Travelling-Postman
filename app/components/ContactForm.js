@@ -34,7 +34,7 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
+    <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="bg-gray-800 text-white rounded-lg shadow-lg p-8 w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center">Contact Form</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -50,7 +50,7 @@ export default function ContactForm() {
               value={formData.recipient}
               onChange={handleChange}
               required
-              className="mt-1 w-full p-3 rounded-lg border border-gray-700 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full p-3 rounded-lg border border-gray-700 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
           <div>
@@ -65,7 +65,7 @@ export default function ContactForm() {
               value={formData.subject}
               onChange={handleChange}
               required
-              className="mt-1 w-full p-3 rounded-lg border border-gray-700 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full p-3 rounded-lg border border-gray-700 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
           <div>
@@ -79,12 +79,12 @@ export default function ContactForm() {
               value={formData.message}
               onChange={handleChange}
               required
-              className="mt-1 w-full p-3 h-32 rounded-lg border border-gray-700 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full p-3 h-32 rounded-lg border border-gray-700 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500"
             ></textarea>
           </div>
           <button
             type="submit"
-            className="w-full py-3 px-6 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full py-3 px-6 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-red-400"
           >
             Send Email
           </button>
