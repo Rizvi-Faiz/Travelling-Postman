@@ -73,7 +73,7 @@ def process_cities(cities):
     return results
 
 # Input array of cities
-cities = ['Chennai', 'Goregaon', 'Delhi']
+cities = ['Mumbai','Hyderabad', 'Chennai']
 
 # Process safety for each city
 results = process_cities(cities)
