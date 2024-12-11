@@ -199,11 +199,17 @@ const AdminAddParcel = () => {
                       <td className="border border-gray-300 px-4 py-2">{order.order_id}</td>
                       <td className="border border-gray-300 px-4 py-2">{order.weight}</td>
                       <td className="border border-gray-300 px-4 py-2">{order.volume}</td>
-                      <td className="border border-gray-300 px-4 py-2">{order.preference}</td>
-                      <td className="border border-gray-300 px-4 py-2">{order.cost}</td>
                       <td className="border border-gray-300 px-4 py-2">
+                        {order.preference === "Cost" ? "Ordinary Post" : "Speed Post"}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">{order.cost}</td>
+                      <td
+                        className={`border border-gray-300 px-4 py-2 ${order.assigned ? "text-green-600" : "text-red-600"
+                          }`}
+                      >
                         {order.assigned || "Not Assigned"}
                       </td>
+
                     </tr>
                   ))}
                 </tbody>

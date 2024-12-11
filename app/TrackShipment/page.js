@@ -180,8 +180,8 @@ const TrackShipment = () => {
       </header>
       <Navbar />
 
+        <h2 className="flex flex-row text-3xl font-bold mt-4 mb-4 justify-center">Track the Dispatcher!</h2>
       <main className="w-full max-w-full p-4 flex flex-col space-y-8">
-        <h2 className="text-2xl mb-4">Track the Dispatcher!</h2>
         <div className="flex flex-col md:flex-row w-full justify-between space-y-4 md:space-y-0">
           <div className="w-full md:w-1/2 p-4 border border-gray-300 flex flex-col items-center justify-center">
             <section className="w-full ">
@@ -194,7 +194,7 @@ const TrackShipment = () => {
           </div>
 
           <div className="w-full md:w-1/2 p-4 flex flex-col items-center">
-            <div className="mb-4 w-full">
+            <div className="mb-4 w-3/4">
               <label className="block mb-2">Dispatcher ID:</label>
               <div className="flex">
                 <input
@@ -204,7 +204,7 @@ const TrackShipment = () => {
                   onChange={handleInputChange}
                 />
                 <button
-                  className="p-2 bg-blue-500 text-white rounded-r"
+                  className="w-1/4 p-2 bg-red-700 ml-2 text-white rounded"
                   onClick={displayRoute}
                 >
                   Enter
