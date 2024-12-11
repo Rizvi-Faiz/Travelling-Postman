@@ -15,6 +15,7 @@ import {
   BarController,
 } from "chart.js";
 import { useRouter } from "next/navigation";
+import DispatchersCard from "../components/DispatchersCard";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, BarController);
@@ -167,11 +168,13 @@ const AdminDashboard = () => {
 
           {/* Card 4: New Dispatchers */}
           <div className="flex flex-col justify-center bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
-            <h3 className="text-2xl font-semibold text-gray-700">New Dispatchers</h3>
-            <p className="text-4xl font-bold text-blue-600">12</p>
+            {/* <h3 className="text-2xl font-semibold text-gray-700">New Dispatchers</h3>
+             */}
+             <DispatchersCard />
+            {/* <p className="text-4xl font-bold text-blue-600">12</p> */}
           </div>
         </div>
-      </div>
+      </div>  
 
       {/* Footer */}
       <footer className="text-sm text-center w-full mt-4">
