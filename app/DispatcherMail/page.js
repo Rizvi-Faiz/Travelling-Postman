@@ -60,7 +60,7 @@ export default function DispatcherMail() {
               onChange={handleChange}
               required
               className="mt-1 w-full p-3 rounded-lg border border-gray-200 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500"
-              disabled
+              
             />
           </div>
           <div>
