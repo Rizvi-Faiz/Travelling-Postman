@@ -90,7 +90,7 @@ const UserDashboard = () => {
           onClick={toggleDropdown}
         >
           <div className="w-10 h-10 bg-red-700 rounded-full flex items-center justify-center">
-            <span className="text-white text-bold text-uppercase">{username.charAt(0)}</span>
+            <span className="text-white font-bold text-uppercase">{username.charAt(0)}</span>
           </div>
         </div>
         {dropdownOpen && (
@@ -116,7 +116,7 @@ const UserDashboard = () => {
       <div className="bg-red-700 h-4 w-full"></div>
 
       <main className="p-6">
-        <h2 className="text-2xl mb-4 text-center">Track Your Order</h2>
+        <h2 className="text-2xl mb-4 text-center ">Track Your Order</h2>
 
         <div className="flex flex-col gap-6 justify-center items-center">
           <section className="w-full flex flex-col gap-4 items-center">
@@ -124,13 +124,13 @@ const UserDashboard = () => {
             <div className="flex items-center space-x-4 mb-6">
               <input
                 type="text"
-                className="flex-grow p-2 border border-gray-300 rounded-l-md focus:ring-2 focus:ring-blue-500"
+                className="flex-grow p-2 border border-gray-200 rounded focus:ring-2 focus:ring-red-500"
                 placeholder="Enter Order ID"
                 value={orderId}
                 onChange={(e) => setOrderId(e.target.value)}
               />
               <button
-                className="p-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:outline-none"
+                className="p-2 bg-red-700 text-white rounded hover:bg-red-600 focus:outline-none"
                 onClick={handleOrderTracking}
                 disabled={loading}
               >
