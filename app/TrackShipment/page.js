@@ -31,6 +31,11 @@ const TrackShipment = () => {
   const handleInputChange = (e) => {
     setDispatcherId(e.target.value);
   };
+  const displayRoute = async () => {
+    await handleConsignment(); // Fetch current location
+    await handleRoute(); // Fetch alternate routes
+    setIdEnter(true); // Display the table and current location
+  };
 
   const handleConsignment = async () => {
     if (dispatcherId.trim() === "") {
@@ -43,7 +48,6 @@ const TrackShipment = () => {
         const data = await response.json();
         if (data.success) {
           const { currentAddress, source, destination } = data.routeDetails;
-          setIdEnter(true);
           setMapData({ source, destination, currentAddress });
         } else {
           alert(data.message || "Failed to fetch route details.");
@@ -55,21 +59,66 @@ const TrackShipment = () => {
   };
 
   const handleRoute = async () => {
-    try {
-      const response = await fetch(
-        `/api/getAlternateRoutes?source=${mapData.source}&destination=${mapData.destination}`
-      );
-      const data = await response.json();
-      if (data.success) {
-        setAlternateRoutes(data.routes);
-        setReroute(true);
-      } else {
-        alert(data.message || "Failed to fetch alternate routes.");
+    if (mapData?.source && mapData?.destination) {
+      try {
+        const response = await fetch(
+          `/api/getAlternateRoutes?source=${mapData.source}&destination=${mapData.destination}`
+        );
+        const data = await response.json();
+        if (data.success) {
+          setAlternateRoutes(data.routes);
+        } else {
+          alert(data.message || "Failed to fetch alternate routes.");
+        }
+      } catch (error) {
+        console.error("Error fetching alternate routes:", error);
       }
-    } catch (error) {
-      console.error("Error fetching alternate routes:", error);
     }
   };
+
+  // const handleConsignment = async () => {
+  //   if (dispatcherId.trim() === "") {
+  //     alert("Please enter a tracking ID");
+  //   } else {
+  //     try {
+  //       const response = await fetch(
+  //         `/api/getRouteDetails?dispatcherId=${dispatcherId}`
+  //       );
+  //       const data = await response.json();
+  //       if (data.success) {
+  //         const { currentAddress, source, destination } = data.routeDetails;
+  //         setMapData({ source, destination, currentAddress });
+  //         setIdEnter(true);
+  //       } else {
+  //         alert(data.message || "Failed to fetch route details.");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching route details:", error);
+  //     }
+  //   }
+  // };
+
+  // const handleRoute = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       `/api/getAlternateRoutes?source=${mapData.source}&destination=${mapData.destination}`
+  //     );
+  //     const data = await response.json();
+  //     if (data.success) {
+  //       setAlternateRoutes(data.routes);
+  //       setIdEnter(true);
+  //     } else {
+  //       alert(data.message || "Failed to fetch alternate routes.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching alternate routes:", error);
+  //   }
+  // };
+
+  // const displayRoute=()=>{
+  //   handleConsignment();
+  //   handleRoute();
+  // }
 
   const handleCheckboxChange = (routePath) => {
     const newRoute = selectedRoute === routePath ? null : routePath;
@@ -135,7 +184,7 @@ const TrackShipment = () => {
         <h2 className="text-2xl mb-4">Track the Dispatcher!</h2>
         <div className="flex flex-col md:flex-row w-full justify-between space-y-4 md:space-y-0">
           <div className="w-full md:w-1/2 p-4 border border-gray-300 flex flex-col items-center justify-center">
-            <section className="w-full p-4 border border-gray-300">
+            <section className="w-full ">
               <IndiaMap
                 source={mapData?.source}
                 destination={mapData?.destination}
@@ -156,7 +205,7 @@ const TrackShipment = () => {
                 />
                 <button
                   className="p-2 bg-blue-500 text-white rounded-r"
-                  onClick={handleConsignment}
+                  onClick={displayRoute}
                 >
                   Enter
                 </button>
@@ -168,21 +217,23 @@ const TrackShipment = () => {
                   <h2 className="font-semibold">Current Location:</h2>
                   <p className="font-bold text-gray-800">{mapData.currentAddress}</p>
                 </div>
-                <button
+                {/* <button
                   onClick={handleRoute}
                   className="p-2 bg-red-700 text-white rounded hover:bg-red-800 transition duration-200"
                 >
                   Re-route
-                </button>
+                </button> */}
               </div>
             )}
-            {reroute && (
+            {idEnter && (
               <div className="w-full flex flex-col">
                 <table className="border border-gray-300 w-full text-left">
                   <thead>
                     <tr className="bg-gray-200">
                       <th className="p-2 border-r border-gray-300">Select</th>
                       <th className="p-2 border-r border-gray-300">Route</th>
+                      <th className="p-2 border-r border-gray-300">Safety</th>
+                      <th className="p-2 border-r border-gray-300">Article</th>
                       <th className="p-2 border-r border-gray-300">ETA</th>
                       <th className="p-2 border-r border-gray-300">Cost</th>
                     </tr>
@@ -199,6 +250,8 @@ const TrackShipment = () => {
                           />
                         </td>
                         <td className="p-2 border-r border-gray-300">{route.path}</td>
+                        <td className="p-2 border-r border-gray-300 text-green-600">Safe</td>
+                        <td className="p-2 border-r border-gray-300"></td>
                         <td className="p-2 border-r border-gray-300">{route.duration}</td>
                         <td className="p-2 border-r border-gray-300">{route.cost}</td>
                       </tr>
