@@ -78,7 +78,7 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="bg-gray-100 ">
+    <div className="bg-gray-100">
       <header className="relative flex items-center justify-between px-7 mt-8 mb-4">
         <Image src={Logo} alt="Postman Logo" width={120} height={120} />
         <h1 className="text-4xl font-bold text-red-700 absolute left-1/2 transform -translate-x-1/2 text-center">
@@ -89,8 +89,8 @@ const UserDashboard = () => {
           className="absolute right-7 cursor-pointer"
           onClick={toggleDropdown}
         >
-          <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-            <span className="text-white">{username.charAt(0)}</span>
+          <div className="w-10 h-10 bg-red-700 rounded-full flex items-center justify-center">
+            <span className="text-white text-bold text-uppercase">{username.charAt(0)}</span>
           </div>
         </div>
         {dropdownOpen && (
