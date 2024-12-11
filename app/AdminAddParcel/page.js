@@ -64,7 +64,7 @@ const AdminAddParcel = () => {
       const senderCityName = senderCityObj.City;
       const receiverCityName = receiverCityObj.City;
 
-      const response = await fetch("/api/ordertabledisplay", {
+      const response = await fetch("/api/Ordertabledisplay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -91,18 +91,29 @@ const AdminAddParcel = () => {
     try {
       const updatedOrders = await Promise.all(
         orderDetails.map(async (order) => {
+          const senderCityObj = cities.find((city) => city.Pincode === String(senderId));
+          const receiverCityObj = cities.find((city) => city.Pincode === String(receiverId));
+  
+          if (!senderCityObj || !receiverCityObj) {
+            alert("Invalid sender or receiver pincode. Please check and try again.");
+            return { ...order, assigned: "Not Placed" };
+          }
+  
+          const senderCityName = senderCityObj.City;
+          const receiverCityName = receiverCityObj.City;
+  
           const response = await fetch("/api/routes", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              senderCity: order.sourceCity,
-              receiverCity: order.destinationCity,
+              senderCity: senderCityName,
+              receiverCity: receiverCityName,
               preference: order.preference,
               weight: order.weight,
-              orderId: order.orderId,
+              orderId: order.order_id,
             }),
           });
-
+  
           if (response.ok) {
             const result = await response.json();
             return { ...order, assigned: "Placed" }; // Set assigned to Placed
@@ -111,13 +122,14 @@ const AdminAddParcel = () => {
           }
         })
       );
-
+  
       setOrderDetails(updatedOrders); // Update the order details with the assigned status
     } catch (error) {
       console.error("Error assigning orders:", error);
     }
     setIsLoading(false);
   };
+  
 
   return (
     <div className="h-full flex flex-col bg-gray-100">
