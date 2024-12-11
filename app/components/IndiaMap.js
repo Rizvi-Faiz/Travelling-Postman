@@ -176,7 +176,7 @@ const IndiaMap = ({ source, destination, currentAddress }) => {
     <div className="flex flex-col h-screen">
       {/* Controls Section */}
       <div className="flex items-center justify-center gap-4 p-4 bg-gray-100 shadow-md z-10">
-        <button
+        {/* <button
           onClick={() =>
             fetchRoute(
               getCityCoordinates(source),
@@ -187,7 +187,7 @@ const IndiaMap = ({ source, destination, currentAddress }) => {
           className="w-1/4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700"
         >
           Get Route
-        </button>
+        </button> */}
       </div>
 
       {/* Map Section */}
