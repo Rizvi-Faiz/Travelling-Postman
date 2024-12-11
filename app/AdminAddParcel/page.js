@@ -16,7 +16,7 @@ const AdminAddParcel = () => {
   const [orderDetails, setOrderDetails] = useState([]);
   const [cities, setCities] = useState([]);
   const [isLoading, setIsLoading] = useState(false); // Loading state for the button
-
+  const [search, setSearch] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const AdminAddParcel = () => {
       const senderCityName = senderCityObj.City;
       const receiverCityName = receiverCityObj.City;
 
-      const response = await fetch("/api/Ordertabledisplay", {
+      const response = await fetch("/api/ordertabledisplay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -76,6 +76,7 @@ const AdminAddParcel = () => {
       if (response.ok) {
         const data = await response.json();
         setOrderDetails(data.orders || []);
+        setSearch(true);
       } else {
         const errorData = await response.json();
         alert(errorData.error || "Failed to fetch orders.");
@@ -93,15 +94,15 @@ const AdminAddParcel = () => {
         orderDetails.map(async (order) => {
           const senderCityObj = cities.find((city) => city.Pincode === String(senderId));
           const receiverCityObj = cities.find((city) => city.Pincode === String(receiverId));
-  
+
           if (!senderCityObj || !receiverCityObj) {
             alert("Invalid sender or receiver pincode. Please check and try again.");
             return { ...order, assigned: "Not Placed" };
           }
-  
+
           const senderCityName = senderCityObj.City;
           const receiverCityName = receiverCityObj.City;
-  
+
           const response = await fetch("/api/routes", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -109,11 +110,11 @@ const AdminAddParcel = () => {
               senderCity: senderCityName,
               receiverCity: receiverCityName,
               preference: order.preference,
-              weight: order.weight,
+              weight: Number(order.weight), // Convert weight to a number
               orderId: order.order_id,
             }),
           });
-  
+
           if (response.ok) {
             const result = await response.json();
             return { ...order, assigned: "Placed" }; // Set assigned to Placed
@@ -122,14 +123,14 @@ const AdminAddParcel = () => {
           }
         })
       );
-  
+
       setOrderDetails(updatedOrders); // Update the order details with the assigned status
     } catch (error) {
       console.error("Error assigning orders:", error);
     }
     setIsLoading(false);
   };
-  
+
 
   return (
     <div className="h-full flex flex-col bg-gray-100">
@@ -193,7 +194,7 @@ const AdminAddParcel = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {orderDetails.map((order,index) => (
+                  {orderDetails.map((order, index) => (
                     <tr key={order.orderId}>
                       <td className="border border-gray-300 px-4 py-2">{order.order_id}</td>
                       <td className="border border-gray-300 px-4 py-2">{order.weight}</td>
@@ -210,15 +211,16 @@ const AdminAddParcel = () => {
             </div>
           )}
 
-          <div className="mt-4 flex justify-center">
-            <button
-              onClick={handleAssignOrders}
-              className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
-              disabled={isLoading} // Disable while loading
-            >
-              {isLoading ? "Assigning..." : "Assign Orders"}
-            </button>
-          </div>
+          {search &&
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={handleAssignOrders}
+                className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
+                disabled={isLoading} // Disable while loading
+              >
+                {isLoading ? "Assigning..." : "Assign Orders"}
+              </button>
+            </div>}
         </div>
       </main>
       <Footer />
