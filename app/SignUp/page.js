@@ -369,7 +369,7 @@ export default function SignUp() {
       <div className="w-full max-w-3xl bg-white bg-opacity-90 p-8 rounded-xl shadow-2xl mt-8">
 
 
-        <h1 className="text-3xl font-bold text-center text-red-700 mb-2">Welcome Back!</h1>
+        <h1 className="text-3xl font-bold text-center text-red-700 mb-2">Welcome!</h1>
         {/* <h2 className="text-lg text-center text-gray-400 mb-4">Login to continue</h2> */}
         <div className="flex flex-col md:flex-row items-center">
           {/* Image Section */}
@@ -394,9 +394,9 @@ export default function SignUp() {
                 <option value="" disabled>
                   Select a role
                 </option>
-                <option value="User">User</option>
-                <option value="Admin">Admin</option>
-                <option value="Dispatcher">Dispatcher</option>
+                <option value="User">Customer</option>
+                <option value="Admin">Sorting Hub Admin</option>
+                <option value="Dispatcher">Transport Agency</option>
               </select>
             </div>
 

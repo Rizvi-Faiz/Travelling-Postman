@@ -29,7 +29,7 @@ const Navbar = () => {
             href="/AdminAddParcel"
             className="text-white hover:text-yellow-400 transition-all duration-300 ease-in-out"
           >
-            Add/Manage Parcels
+            Manage Parcels
           </Link>
           {/* <Link
             href="/view-routes"
