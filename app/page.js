@@ -66,7 +66,7 @@ function HomePage() {
   // Redirect the user to the HTML page when the component is mounted
   useEffect(() => {
     // Redirect to the HTML page directly
-    router.push("/logistica-1.0.0/index.html");
+    router.push("/landing page/index.html");
   }, [router]);
 
   return (
