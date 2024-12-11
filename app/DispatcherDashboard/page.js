@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import withAuth from "@/lib/withAuth";
 import DispatcherNavbar from "../components/DispatcherNavbar";
+import Footer from "../components/Footer";
 
 const DispatcherDashboard = () => {
   const [username, setUsername] = useState("");
@@ -62,7 +63,7 @@ const DispatcherDashboard = () => {
       </header>
       <DispatcherNavbar />
       <div className="flex-grow flex flex-col items-center px-8 py-6 overflow-auto">
-        <div className="bg-white shadow-xl rounded-lg w-full max-w-6xl p-6">
+        <div className="h-screen bg-white shadow-xl rounded-lg w-full max-w-6xl p-6">
           <h2 className="text-3xl font-semibold text-center mb-6 text-gray-700">
             Order Details
           </h2>
@@ -114,9 +115,10 @@ const DispatcherDashboard = () => {
           </table>
         </div>
       </div>
-      <footer className="text-sm text-center w-full mt-12 pb-6">
+      {/* <footer className="text-sm text-center w-full mt-12 pb-6">
         <p>Contact Admin: +91 (719) 581-7902 || abc@gmail.com</p>
-      </footer>
+      </footer> */}
+      <Footer/>
     </div>
   );
 };

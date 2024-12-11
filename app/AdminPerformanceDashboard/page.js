@@ -136,26 +136,26 @@ const route=useRouter();
         {/* Right Section */}
         <div className="bg-white p-6 shadow-md rounded-lg grid grid-cols-2 gap-4">
           {/* Card 1: Total Orders Delivered */}
-          <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-            <h2 className="font-bold text-lg">Total Orders Delivered</h2>
+          <div className="flex flex-col bg-gray-100 p-6 rounded-lg shadow-md justify-center items-center">
+            <h2 className="font-bold text-2xl">Total Orders Delivered</h2>
             <p className="text-4xl font-bold text-green-600">8,500</p>
           </div>
 
           {/* Card 2: Total Users */}
-          <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-            <h2 className="font-bold text-lg">Total Users</h2>
+          <div className="flex flex-col bg-gray-100 p-6 rounded-lg shadow-md justify-center items-center">
+            <h2 className="font-bold text-2xl">Total Users</h2>
             <p className="text-4xl font-bold text-blue-600">1,250</p>
           </div>
 
           {/* Card 3: Revenue Generated */}
-          <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-            <h2 className="font-bold text-lg">Revenue Generated</h2>
+          <div className="flex flex-col bg-gray-100 p-6 rounded-lg shadow-md justify-center items-center">
+            <h2 className="font-bold text-2xl">Revenue Generated</h2>
             <p className="text-4xl font-bold text-yellow-600">$120,000</p>
           </div>
 
           {/* Card 4: Number of Access Points */}
-          <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-            <h2 className="font-bold text-lg">Number of Access Points</h2>
+          <div className="flex flex-col bg-gray-100 p-6 rounded-lg shadow-md justify-center items-center">
+            <h2 className="font-bold text-2xl">Number of Access Points</h2>
             <p className="text-4xl font-bold text-red-600">42</p>
           </div>
         </div>

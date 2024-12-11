@@ -148,25 +148,25 @@ const AdminDashboard = () => {
         {/* Right Section: Stats */}
         <div className="flex-1 grid grid-cols-2 gap-6">
           {/* Card 1: Total Deliveries Completed */}
-          <div className="bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
+          <div className="flex flex-col justify-center bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
             <h3 className="text-2xl font-semibold text-gray-700">Total Deliveries Completed</h3>
             <p className="text-4xl font-bold text-green-600">4357</p>
           </div>
 
           {/* Card 2: Pending Deliveries */}
-          <div className="bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
+          <div className="flex flex-col justify-center bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
             <h3 className="text-2xl font-semibold text-gray-700">Pending Deliveries</h3>
             <p className="text-4xl font-bold text-red-600">870</p>
           </div>
 
           {/* Card 3: Average Delivery Time */}
-          <div className="bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
+          <div className="flex flex-col justify-center bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
             <h3 className="text-2xl font-semibold text-gray-700">Average Delivery Time</h3>
             <p className="text-4xl font-bold text-purple-600">35 hours/order</p>
           </div>
 
           {/* Card 4: New Dispatchers */}
-          <div className="bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
+          <div className="flex flex-col justify-center bg-white shadow-xl rounded-lg p-6 text-center transform hover:scale-105 transition duration-300 ease-in-out">
             <h3 className="text-2xl font-semibold text-gray-700">New Dispatchers</h3>
             <p className="text-4xl font-bold text-blue-600">12</p>
           </div>
