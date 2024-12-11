@@ -68,13 +68,9 @@ export async function POST(req) {
     }
 
     const isRouteSafe = (path) => {
-        // Split the path based on 'road', 'rail', or 'air'
-        const nodes = path.split(/\s?\(road\)|\s?\(rail\)|\s?\(air\)/).map((node) => node.trim()).filter((node) => node !== '');
-      
+        const nodes = path.split(/\s?\(road\)|\s?\(rail\)|\s?\(air\)/).map((node) => node.trim()).filter((node) => node !== '');     
         console.log("Debug: Safety Check for Nodes:", nodes);
-      
-        // Implement safety checks for each node if needed, e.g., check node validity or any other condition
-        return nodes.every((node) => true); // Placeholder: replace with actual safety checks if necessary
+        return nodes.every((node) => true);
       };
       
       const safePaths = paths.filter((route) => isRouteSafe(route.path));
@@ -117,10 +113,10 @@ export async function POST(req) {
           WHERE current_location = $1
           AND dispatcher_id NOT IN (
             SELECT dispatcher_id FROM routes
-            WHERE source = $1 AND destination = $2
+            WHERE source = $1
           )
         `;
-        const dispatcherResult = await db.query(dispatcherQuery, [senderCity, receiverCity]);
+        const dispatcherResult = await db.query(dispatcherQuery, [senderCity]);
 
         if (dispatcherResult.rows.length === 0) {
           console.error("Debug: No Available Dispatcher");
