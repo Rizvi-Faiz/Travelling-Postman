@@ -30,7 +30,7 @@ function DispatchersCard() {
     <div>
       {/* Card for dispatchers */}
       <div
-        className={`flex flex-col justify-center bg-white shadow-xl rounded-lg p-6 text-center transform transition-all duration-300 ease-in-out ${
+        className={`flex flex-col justify-center  rounded-lg p-6 text-center transform transition-all duration-300 ease-in-out ${
           isExpanded ? "scale-110 p-10" : "hover:scale-105"
         }`}
         onClick={handleCardClick}
@@ -47,9 +47,9 @@ function DispatchersCard() {
             className="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex justify-center items-center"
             onClick={handleOverlayClick}
           >
-            <div className="bg-white rounded-lg w-[95%] h-[90%] overflow-auto transform scale-110">
+            <div className="bg-white rounded-lg w-[70%] h-[85%] overflow-auto transform scale-110">
               <div className="flex justify-between items-center p-4 border-b">
-                <h2 className="text-xl font-semibold text-gray-700">Dispatchers</h2>
+                <h2 className="text-xl justify-center font-semibold text-gray-700">Dispatchers</h2>
                 <button
                   className="text-red-600 font-semibold"
                   onClick={() => setIsExpanded(false)}
@@ -58,8 +58,8 @@ function DispatchersCard() {
                 </button>
               </div>
 
-              <div className="overflow-auto max-h-[50vh]">
-                <table className="w-50% text-left border-collapse border border-gray-200">
+              <div className="overflow-auto max-h-[75vh]">
+                <table className="w-25% text-left border-collapse border border-gray-200">
                   <thead className="bg-gray-100">
                     <tr>
                       <th className="border border-gray-300 px-4 py-2">ID</th>
