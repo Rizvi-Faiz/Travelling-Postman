@@ -58,11 +58,11 @@ function DispatchersCard() {
                 </button>
               </div>
 
-              <div className="overflow-auto max-h-[75vh]">
-                <table className="w-25% text-left border-collapse border border-gray-200">
+              <div className="overflow-auto max-h-[75vh] flex flex-row justify-center">
+                <table className=" w-25% text-left border-collapse border border-gray-200 ">
                   <thead className="bg-gray-100">
                     <tr>
-                      <th className="border border-gray-300 px-4 py-2">ID</th>
+                      {/* <th className="border border-gray-300 px-4 py-2">ID</th>*/}
                       <th className="border border-gray-300 px-4 py-2">Name</th>
                       <th className="border border-gray-300 px-4 py-2">Email</th>
                       <th className="border border-gray-300 px-4 py-2">Contact</th>
@@ -75,16 +75,16 @@ function DispatchersCard() {
                   <tbody>
                     {dispatchers.map((dispatcher) => (
                       <tr key={dispatcher.dispatcher_id} className="hover:bg-gray-50">
-                        <td className="border border-gray-300 px-4 py-2">
+                        {/* <td className="border border-gray-300 px-4 py-2">
                           {dispatcher.dispatcher_id}
-                        </td>
+                        </td> */}
                         <td className="border border-gray-300 px-4 py-2">{dispatcher.name}</td>
                         <td className="border border-gray-300 px-4 py-2">{dispatcher.email}</td>
                         <td className="border border-gray-300 px-4 py-2">{dispatcher.contact}</td>
                         <td className="border border-gray-300 px-4 py-2">{dispatcher.username}</td>
                         <td className="border border-gray-300 px-4 py-2">{dispatcher.total_delays}</td>
                         <td className="border border-gray-300 px-4 py-2">{dispatcher.mode}</td>
-                        <td className="border border-gray-300 px-4 py-2">{dispatcher.additional_info}</td>
+                        <td className="border border-gray-300 px-4 py-2">{dispatcher.mode_number}</td>
                       </tr>
                     ))}
                   </tbody>
