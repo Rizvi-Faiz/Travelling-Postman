@@ -19,6 +19,7 @@ const AdminAddParcel = () => {
   const [cities, setCities] = useState([]);
   const [isLoading, setIsLoading] = useState(false); // Loading state for the button
   const [assign, setAssign] = useState(false);
+  const [search, setSearch] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -54,41 +55,41 @@ const AdminAddParcel = () => {
   }, [router]);
 
   const handleOrderSearch = async () => {
-    // try {
-    //   const senderCityObj = cities.find((city) => city.Pincode === String(senderId));
-    //   const receiverCityObj = cities.find((city) => city.Pincode === String(receiverId));
+    try {
+      const senderCityObj = cities.find((city) => city.Pincode === String(senderId));
+      const receiverCityObj = cities.find((city) => city.Pincode === String(receiverId));
 
-    //   if (!senderCityObj || !receiverCityObj) {
-    //     alert("Invalid sender or receiver pincode. Please check and try again.");
-    //     return;
-    //   }
+      if (!senderCityObj || !receiverCityObj) {
+        alert("Invalid sender or receiver pincode. Please check and try again.");
+        return;
+      }
 
-    //   const senderCityName = senderCityObj.City;
-    //   const receiverCityName = receiverCityObj.City;
-    //   setSource(senderCityName);
-    //   setDestination(receiverCityName);
-    //   const response = await fetch("/api/ordertabledisplay", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       senderCity: senderCityName,
-    //       receiverCity: receiverCityName,
-    //     }),
-    //   });
+      const senderCityName = senderCityObj.City;
+      const receiverCityName = receiverCityObj.City;
+      setSource(senderCityName);
+      setDestination(receiverCityName);
+      const response = await fetch("/api/Ordertabledisplay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          senderCity: senderCityName,
+          receiverCity: receiverCityName,
+        }),
+      });
 
-    //   if (response.ok) {
-    //     const data = await response.json();
-    //     setOrderDetails(data.orders || []);
-    //     setSearch(true);
-    //   } else {
-    //     const errorData = await response.json();
-    //     alert(errorData.error || "Failed to fetch orders.");
-    //   }
-    // } catch (error) {
-    //   console.error("Error fetching orders:", error);
-    //   alert("An error occurred while fetching orders. Please try again.");
-    // }
-    setAssign(true);
+      if (response.ok) {
+        const data = await response.json();
+        setOrderDetails(data.orders || []);
+        setSearch(true);
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || "Failed to fetch orders.");
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      alert("An error occurred while fetching orders. Please try again.");
+    }
+    // setAssign(true);
   };
 
   const handleAssignOrders = async () => {
@@ -251,14 +252,14 @@ const AdminAddParcel = () => {
               onClick={handleOrderSearch}
               className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
             >
-              Assign Dispatcher
+              search orders
             </button>
           </div>
           {assign &&
           <h2 className="flex flex-row justify-center font-bold text-lg text-green-500 mt-3">Batch assigned!</h2>
           }
 
-          {/* {orderDetails && orderDetails.length > 0 && (
+          {orderDetails && orderDetails.length > 0 && (
             <div className="mt-6">
               <h3 className="text-lg font-semibold mb-4">Orders From {senderId} To {receiverId}</h3>
               <table className="table-auto w-full border-collapse border border-gray-300">
@@ -269,10 +270,10 @@ const AdminAddParcel = () => {
                     <th className="border border-gray-300 px-4 py-2">Volume</th>
                     <th className="border border-gray-300 px-4 py-2">Type of Service</th>
                     <th className="border border-gray-300 px-4 py-2">Cost</th>
-                    <th className="border border-gray-300 px-4 py-2">Assigned</th> {/* New Assigned Column */}
-                  {/* </tr>
-                </thead> */}
-                {/* <tbody>
+                    <th className="border border-gray-300 px-4 py-2">Assigned</th> 
+                  </tr>
+                </thead> 
+                <tbody>
                   {orderDetails.map((order, index) => (
                     <tr key={order.orderId}>
                       <td className="border border-gray-300 px-4 py-2">{order.order_id}</td>
@@ -291,11 +292,11 @@ const AdminAddParcel = () => {
 
                     </tr>
                   ))}
-                </tbody> */}
-              {/* </table>
-            </div> */}
-          
-          {/* {search &&
+                </tbody> 
+               </table>
+            </div> 
+          )}
+          {search &&
             <div className="mt-4 flex justify-center">
               <button
                 onClick={handleAssignOrders}
@@ -304,7 +305,7 @@ const AdminAddParcel = () => {
               >
                 {isLoading ? "Assigning..." : "Assign Orders"}
               </button>
-            </div>} */}
+            </div>}
         </div>
       </main>
       <Footer />

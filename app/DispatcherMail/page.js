@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function DispatcherMail() {
   const [formData, setFormData] = useState({
     recipient: "",
-    subject: "",
+    subject: "Delay Inquiry",
     message: "Hello Dispatcher, kindly inform about the reason of delay.",
   });
   const [responseMessage, setResponseMessage] = useState("");
