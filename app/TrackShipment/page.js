@@ -233,7 +233,7 @@ const TrackShipment = () => {
                       <th className="p-2 border-r border-gray-300">Select</th>
                       <th className="p-2 border-r border-gray-300">Route</th>
                       <th className="p-2 border-r border-gray-300">Safety</th>
-                      <th className="p-2 border-r border-gray-300">Article</th>
+                      <th className="p-2 border-r border-gray-300">Weather</th>
                       <th className="p-2 border-r border-gray-300">ETA</th>
                       <th className="p-2 border-r border-gray-300">Cost</th>
                     </tr>
@@ -251,7 +251,7 @@ const TrackShipment = () => {
                         </td>
                         <td className="p-2 border-r border-gray-300">{route.path}</td>
                         <td className="p-2 border-r border-gray-300 text-green-600">Safe</td>
-                        <td className="p-2 border-r border-gray-300"></td>
+                        <td className="p-2 border-r border-gray-300">Sunny</td>
                         <td className="p-2 border-r border-gray-300">{route.duration}</td>
                         <td className="p-2 border-r border-gray-300">{route.cost}</td>
                       </tr>
