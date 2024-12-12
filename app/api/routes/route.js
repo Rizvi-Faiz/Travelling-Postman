@@ -111,33 +111,33 @@ export async function POST(req) {
         ? safePaths.reduce((a, b) => (a.cost < b.cost ? a : b))
         : safePaths[0];
     console.log("Debug: Selected Route:", selectedRoute);
-    const path = selectedRoute.path;
+    // const path = selectedRoute.path;
 
-    // Extract the nodes and modes
-    const nodes = path
-      .split(/\s?\(road\)|\s?\(rail\)|\s?\(air\)/)
-      .map((node) => node.trim())
-      .filter((node) => node !== "");
-    const modes =
-      path
-        .match(/\(road\)|\(rail\)|\(air\)/g)
-        ?.map((mode) => mode.replace(/[()]/g, "").trim()) || [];
+    // // Extract the nodes and modes
+    // const nodes = path
+    //   .split(/\s?\(road\)|\s?\(rail\)|\s?\(air\)/)
+    //   .map((node) => node.trim())
+    //   .filter((node) => node !== "");
+    // const modes =
+    //   path
+    //     .match(/\(road\)|\(rail\)|\(air\)/g)
+    //     ?.map((mode) => mode.replace(/[()]/g, "").trim()) || [];
 
-    console.log("Debug: Nodes:", nodes);
-    console.log("Debug: Modes:", modes);
+    // console.log("Debug: Nodes:", nodes);
+    // console.log("Debug: Modes:", modes);
 
-    // Get the mode for the first route, if available
-    const firstMode = modes.length > 0 ? modes[0] : null;
+    // // Get the mode for the first route, if available
+    // const firstMode = modes.length > 0 ? modes[0] : null;
 
-    if (firstMode) {
-      console.log("Debug: First Route Mode:", firstMode);
-    } else {
-      console.log("Debug: No modes found in the path.");
-    }
+    // if (firstMode) {
+    //   console.log("Debug: First Route Mode:", firstMode);
+    // } else {
+    //   console.log("Debug: No modes found in the path.");
+    // }
 
-    const mair = 8;
-    const mroad = 3;
-    const mrail = 4;
+    // const mair = 8;
+    // const mroad = 3;
+    // const mrail = 4;
 
     const routeCheckQuery = `
       SELECT * FROM routes WHERE source = $1 AND destination = $2 AND path = $3
