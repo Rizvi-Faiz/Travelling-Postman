@@ -12,11 +12,13 @@ const AdminAddParcel = () => {
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState(null);
   const [senderId, setSenderId] = useState("");
+  const [source, setSource] = useState("");
+  const [destination, setDestination] = useState("");
   const [receiverId, setReceiverId] = useState("");
   const [orderDetails, setOrderDetails] = useState([]);
   const [cities, setCities] = useState([]);
   const [isLoading, setIsLoading] = useState(false); // Loading state for the button
-  const [search, setSearch] = useState(false);
+  const [assign, setAssign] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -52,39 +54,41 @@ const AdminAddParcel = () => {
   }, [router]);
 
   const handleOrderSearch = async () => {
-    try {
-      const senderCityObj = cities.find((city) => city.Pincode === String(senderId));
-      const receiverCityObj = cities.find((city) => city.Pincode === String(receiverId));
+    // try {
+    //   const senderCityObj = cities.find((city) => city.Pincode === String(senderId));
+    //   const receiverCityObj = cities.find((city) => city.Pincode === String(receiverId));
 
-      if (!senderCityObj || !receiverCityObj) {
-        alert("Invalid sender or receiver pincode. Please check and try again.");
-        return;
-      }
+    //   if (!senderCityObj || !receiverCityObj) {
+    //     alert("Invalid sender or receiver pincode. Please check and try again.");
+    //     return;
+    //   }
 
-      const senderCityName = senderCityObj.City;
-      const receiverCityName = receiverCityObj.City;
+    //   const senderCityName = senderCityObj.City;
+    //   const receiverCityName = receiverCityObj.City;
+    //   setSource(senderCityName);
+    //   setDestination(receiverCityName);
+    //   const response = await fetch("/api/ordertabledisplay", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({
+    //       senderCity: senderCityName,
+    //       receiverCity: receiverCityName,
+    //     }),
+    //   });
 
-      const response = await fetch("/api/Ordertabledisplay", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          senderCity: senderCityName,
-          receiverCity: receiverCityName,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setOrderDetails(data.orders || []);
-        setSearch(true);
-      } else {
-        const errorData = await response.json();
-        alert(errorData.error || "Failed to fetch orders.");
-      }
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-      alert("An error occurred while fetching orders. Please try again.");
-    }
+    //   if (response.ok) {
+    //     const data = await response.json();
+    //     setOrderDetails(data.orders || []);
+    //     setSearch(true);
+    //   } else {
+    //     const errorData = await response.json();
+    //     alert(errorData.error || "Failed to fetch orders.");
+    //   }
+    // } catch (error) {
+    //   console.error("Error fetching orders:", error);
+    //   alert("An error occurred while fetching orders. Please try again.");
+    // }
+    setAssign(true);
   };
 
   const handleAssignOrders = async () => {
@@ -102,7 +106,8 @@ const AdminAddParcel = () => {
   
           const senderCityName = senderCityObj.City;
           const receiverCityName = receiverCityObj.City;
-  
+          setSource(senderCityName);
+          setDestination(receiverCityName);
           const response = await fetch("/api/routes", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -189,7 +194,29 @@ const AdminAddParcel = () => {
           <h1 className="font-bold text-2xl text-center mb-6">Sorting Hub</h1>
           <div className="flex flex-row mb-6 justify-center">
             <div className="px-2">
-              <h2 className="font-bold mb-2 text-lg">From</h2>
+              <h2 className="font-bold mb-2 text-lg">Source City</h2>
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2"
+                placeholder="Source City"
+                value={source}
+                onChange={(e) => setSenderId(e.target.value)}
+              />
+            </div>
+            <div className="px-2">
+              <h2 className="font-bold mb-2 text-lg">Destination City</h2>
+              <input
+                type="text"
+                className="w-full border rounded px-3 py-2"
+                placeholder="Destination City"
+                value={destination}
+                onChange={(e) => setReceiverId(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex flex-row mb-6 justify-center">
+            <div className="px-2">
+              <h2 className="font-bold mb-2 text-lg">Source PO Pincode</h2>
               <input
                 type="text"
                 className="w-full border rounded px-3 py-2"
@@ -199,7 +226,7 @@ const AdminAddParcel = () => {
               />
             </div>
             <div className="px-2">
-              <h2 className="font-bold mb-2 text-lg">To</h2>
+              <h2 className="font-bold mb-2 text-lg">Destination PO Pincode</h2>
               <input
                 type="text"
                 className="w-full border rounded px-3 py-2"
@@ -209,16 +236,29 @@ const AdminAddParcel = () => {
               />
             </div>
           </div>
+
+          {/* <div className="mt-4 flex justify-center">
+            <button
+              onClick={handleAssignOrders}
+              className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
+              disabled={isLoading} // Disable while loading
+            >
+              {isLoading ? "Assigning..." : "Assign Orders"}
+            </button>
+          </div> */}
           <div className="flex justify-center">
             <button
               onClick={handleOrderSearch}
               className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
             >
-              Search Order
+              Assign Dispatcher
             </button>
           </div>
+          {assign &&
+          <h2 className="flex flex-row justify-center font-bold text-lg text-green-500 mt-3">Batch assigned!</h2>
+          }
 
-          {orderDetails && orderDetails.length > 0 && (
+          {/* {orderDetails && orderDetails.length > 0 && (
             <div className="mt-6">
               <h3 className="text-lg font-semibold mb-4">Orders From {senderId} To {receiverId}</h3>
               <table className="table-auto w-full border-collapse border border-gray-300">
@@ -230,9 +270,9 @@ const AdminAddParcel = () => {
                     <th className="border border-gray-300 px-4 py-2">Type of Service</th>
                     <th className="border border-gray-300 px-4 py-2">Cost</th>
                     <th className="border border-gray-300 px-4 py-2">Assigned</th> {/* New Assigned Column */}
-                  </tr>
-                </thead>
-                <tbody>
+                  {/* </tr>
+                </thead> */}
+                {/* <tbody>
                   {orderDetails.map((order, index) => (
                     <tr key={order.orderId}>
                       <td className="border border-gray-300 px-4 py-2">{order.order_id}</td>
@@ -251,12 +291,11 @@ const AdminAddParcel = () => {
 
                     </tr>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {search &&
+                </tbody> */}
+              {/* </table>
+            </div> */}
+          
+          {/* {search &&
             <div className="mt-4 flex justify-center">
               <button
                 onClick={handleAssignOrders}
@@ -265,7 +304,7 @@ const AdminAddParcel = () => {
               >
                 {isLoading ? "Assigning..." : "Assign Orders"}
               </button>
-            </div>}
+            </div>} */}
         </div>
       </main>
       <Footer />

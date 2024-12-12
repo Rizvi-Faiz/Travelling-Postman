@@ -6,7 +6,7 @@ export default function DispatcherMail() {
   const [formData, setFormData] = useState({
     recipient: "",
     subject: "",
-    message: "",
+    message: "Hello Dispatcher, kindly inform about the reason of delay.",
   });
   const [responseMessage, setResponseMessage] = useState("");
   const searchParams = useSearchParams();
@@ -85,7 +85,7 @@ export default function DispatcherMail() {
             <textarea
               id="message"
               name="message"
-              placeholder="Enter your message"
+              placeholder="Enter message"
               value={formData.message}
               onChange={handleChange}
               required

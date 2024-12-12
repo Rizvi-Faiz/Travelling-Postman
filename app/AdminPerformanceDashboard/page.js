@@ -44,7 +44,7 @@ const route=useRouter();
       // Generate random dispatcher ID (e.g., D1, D2, ...)
       const dispatcherId = `D${Math.floor(Math.random() * 100)}`;
       // Generate a random delay value between 1 and 100
-      const delay = Math.floor(Math.random() * 100) + 1;
+      const delay = Math.floor(Math.random() * 10) + 1;
       data.push({ dispatcherId, delay });
     }
     return data;
