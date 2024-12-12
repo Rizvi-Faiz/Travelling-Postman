@@ -6,7 +6,8 @@ const AdminLayout = ({ children }) => {
     return (
         <html lang="en">
             <body>
-                <Chatbot > {children}</Chatbot>
+                {/* <Chatbot > {children}</Chatbot> */}
+                {children}
             </body>
         </html>
     );

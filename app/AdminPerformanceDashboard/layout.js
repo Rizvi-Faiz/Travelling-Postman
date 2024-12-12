@@ -12,7 +12,8 @@ export const metadata = {
     return (
       <html lang="en">
         <body>
-        <Chatbot > {children}</Chatbot>
+        {/* <Chatbot > {children}</Chatbot> */}
+        {children}
         </body>
       </html>
     );
