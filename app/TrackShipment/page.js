@@ -32,8 +32,14 @@ const TrackShipment = () => {
     setDispatcherId(e.target.value);
   };
   const displayRoute = async () => {
-    await handleConsignment(); // Fetch current location
-    await handleRoute(); // Fetch alternate routes
+    if (dispatcherId.trim() === "") {
+      alert("Please enter a tracking ID");
+      return;
+    }
+    await handleConsignment();
+    if (mapData?.source && mapData?.destination) {
+      await handleRoute();
+    }
     setIdEnter(true); // Display the table and current location
   };
 
@@ -194,7 +200,7 @@ const TrackShipment = () => {
           </div>
 
           <div className="w-full md:w-1/2 p-4 flex flex-col items-center">
-            <div className="mb-4 w-3/4">
+            <div className="mb-4 w-full">
               <label className="block mb-2">Dispatcher ID:</label>
               <div className="flex">
                 <input
@@ -204,7 +210,7 @@ const TrackShipment = () => {
                   onChange={handleInputChange}
                 />
                 <button
-                  className="w-1/4 p-2 bg-red-700 ml-2 text-white rounded"
+                  className="w-1/4 p-2 bg-red-700 ml-2 text-white rounded hover:bg-red-600"
                   onClick={displayRoute}
                 >
                   Enter

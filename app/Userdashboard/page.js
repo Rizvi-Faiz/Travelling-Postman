@@ -78,19 +78,19 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-full">
+    <div className="bg-gray-100 min-h-screen ">
       <header className="relative flex items-center justify-between px-7 mt-8 mb-4">
         <Image src={Logo} alt="Postman Logo" width={120} height={120} />
         <h1 className="text-4xl font-bold text-red-700 absolute left-1/2 transform -translate-x-1/2 text-center">
           Welcome {username} <br />
-          <span className="text-xl">Your User ID: {userId}</span>
+          <span className="text-xl text-gray-500">Your User ID: {userId}</span>
         </h1>
         <div
           className="absolute right-7 cursor-pointer"
           onClick={toggleDropdown}
         >
           <div className="w-10 h-10 bg-red-700 rounded-full flex items-center justify-center">
-            <span className="text-white font-bold text-uppercase">{username.charAt(0)}</span>
+            <span className="text-white font-bold text-uppercase">{username.charAt(0).toUpperCase()}</span>
           </div>
         </div>
         {dropdownOpen && (
@@ -149,39 +149,54 @@ const UserDashboard = () => {
                   />
                 </div>
 
-                <div className="w-full md:w-1/2 flex flex-col gap-6">
+                <div className="w-full bg-white shadow-lg rounded-lg md:w-1/2 p-6 flex flex-col gap-2">
                   {/* Displaying Order Details in Cards */}
-                  <div className="bg-white p-4 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold mb-2">Source</h3>
-                    <p>{mapData.source}</p>
+                  <div className="flex flex-row w-full gap-2 mb-2 ">
+                    <div className="w-full">
+                      <h3 className="text-xl font-semibold mb-1  text-gray-800">Source</h3>
+                      <div className="p-2 bg-gray-50 border rounded-lg">
+                        <p className="text-gray-600">{mapData.source}</p>
+                      </div>
+                    </div>
+                    <div className="w-full">
+                      <h3 className="text-xl font-semibold mb-1 text-gray-800">Destination</h3>
+                      <div className="p-2 bg-gray-50 border rounded-lg">
+                        <p className="text-gray-600">{mapData.destination}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mb-2 ">
+                  <h3 className="text-xl font-semibold mb-1 text-gray-800">Current Address</h3>
+                  <div className="p-2 bg-gray-50 border rounded-lg">
+                    <p className="text-gray-600">{mapData.currentAddress}</p>
+                  </div>
+                  </div>
+                  <div className="flex flex-row w-full gap-2 mb-2" >
+                    <div className="w-full">
+                      <h3 className="text-xl font-semibold mb-1 text-gray-800">Status</h3>
+                      <div className="p-2 bg-gray-50 border rounded-lg">
+                        {/* <p className="text-gray-600">{mapData.status}</p> */}
+                        <p className="text-green-600">Order is being processed</p>
+                      </div>
+                    </div>
+                    <div className="w-full">
+                      <h3 className="text-xl font-semibold mb-1 text-gray-800">Delay</h3>
+                      <div className="p-2 bg-gray-50 border mb-1 rounded-lg">
+                        <p className="text-gray-600">
+                          {mapData.delay ? `${mapData.delay} minutes` : "No delay"}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="bg-white p-4 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold mb-2">Destination</h3>
-                    <p>{mapData.destination}</p>
-                  </div>
-
-                  <div className="bg-white p-4 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold mb-2">Current Address</h3>
-                    <p>{mapData.currentAddress}</p>
-                  </div>
-
-                  <div className="bg-white p-4 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold mb-2">Delay</h3>
-                    <p>{mapData.delay ? `${mapData.delay} minutes` : "No delay"}</p>
-                  </div>
-
-                  <div className="bg-white p-4 rounded-lg shadow-md">
-                    <h3 className="text-xl font-semibold mb-2">Status</h3>
-                    <p>{mapData.status}</p>
-                  </div>
                 </div>
+
               </div>
             )}
           </section>
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
 
     </div>
   );
