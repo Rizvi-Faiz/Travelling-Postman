@@ -259,7 +259,7 @@ const AdminAddParcel = () => {
           <h2 className="flex flex-row justify-center font-bold text-lg text-green-500 mt-3">Batch assigned!</h2>
           }
 
-          {orderDetails && orderDetails.length > 0 && (
+          {/* {orderDetails && orderDetails.length > 0 && (
             <div className="mt-6">
               <h3 className="text-lg font-semibold mb-4">Orders From {senderId} To {receiverId}</h3>
               <table className="table-auto w-full border-collapse border border-gray-300">
@@ -295,7 +295,7 @@ const AdminAddParcel = () => {
                 </tbody> 
                </table>
             </div> 
-          )}
+          )} */}
           {search &&
             <div className="mt-4 flex justify-center">
               <button
