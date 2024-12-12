@@ -94,15 +94,15 @@ const AdminAddParcel = () => {
         orderDetails.map(async (order) => {
           const senderCityObj = cities.find((city) => city.Pincode === String(senderId));
           const receiverCityObj = cities.find((city) => city.Pincode === String(receiverId));
-
+  
           if (!senderCityObj || !receiverCityObj) {
             alert("Invalid sender or receiver pincode. Please check and try again.");
             return { ...order, assigned: "Not Placed" };
           }
-
+  
           const senderCityName = senderCityObj.City;
           const receiverCityName = receiverCityObj.City;
-
+  
           const response = await fetch("/api/routes", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -114,7 +114,7 @@ const AdminAddParcel = () => {
               orderId: order.order_id,
             }),
           });
-
+  
           if (response.ok) {
             const result = await response.json();
             return { ...order, assigned: "Placed" }; // Set assigned to Placed
@@ -123,13 +123,52 @@ const AdminAddParcel = () => {
           }
         })
       );
-
+  
       setOrderDetails(updatedOrders); // Update the order details with the assigned status
+  
+      // Step 1: Filter out orders that are placed
+      const placedOrders = updatedOrders.filter((order) => order.assigned === "Placed");
+  
+      // Step 2: Extract order IDs and fetch user details
+      const orderIds = placedOrders.map((order) => order.order_id);
+  
+      // Make a request to get user details for the placed orders
+      const orderIdsQuery = orderIds.join(','); // Convert array to comma-separated string
+
+      const userDetailsResponse = await fetch(`/api/userz?orderIds=${orderIdsQuery}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      
+      if (userDetailsResponse.ok) {
+        const userDetails = await userDetailsResponse.json();
+        console.log(userDetails); // Handle the response data
+      } else {
+        console.error("Failed to fetch user details:", userDetailsResponse.statusText);
+      }
+      
+  
+      if (userDetailsResponse.ok) {
+        const userDetails = await userDetailsResponse.json();
+  
+        // Assuming userDetails contains an array of users
+        userDetails.forEach((user) => {
+          // Extract sender and receiver information
+          const senderEmail = user.sender_email;
+          const receiverEmail = user.receiver_email;
+  
+          console.log(`Sender Email: ${senderEmail}, Receiver Email: ${receiverEmail}`);
+          // You can use this information as needed, e.g., send emails, update the UI, etc.
+        });
+      } else {
+        console.error("Error fetching user details");
+      }
     } catch (error) {
       console.error("Error assigning orders:", error);
     }
     setIsLoading(false);
   };
+  
 
 
   return (
