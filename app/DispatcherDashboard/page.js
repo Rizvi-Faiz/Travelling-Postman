@@ -70,7 +70,7 @@ const DispatcherDashboard = () => {
           <table className="table-auto w-full border-collapse">
             <thead>
               <tr className="bg-gray-200 text-left">
-                <th className="px-4 py-2 border font-semibold text-gray-600">Order ID</th>
+                {/* <th className="px-4 py-2 border font-semibold text-gray-600">Order ID</th> */}
                 <th className="px-4 py-2 border font-semibold text-gray-600">Status</th>
                 <th className="px-4 py-2 border font-semibold text-gray-600">Delay (Days)</th>
                 <th className="px-4 py-2 border font-semibold text-gray-600">Drop Time</th>
@@ -83,7 +83,7 @@ const DispatcherDashboard = () => {
             <tbody>
               {orderDetails.map((order, index) => (
                 <tr key={index} className="hover:bg-gray-50 text-sm">
-                  <td className="px-4 py-2 border text-gray-800">{order.orderId}</td>
+                  {/* <td className="px-4 py-2 border text-gray-800">{order.orderId}</td> */}
                   <td className="px-4 py-2 border text-gray-800">
                     <span
                       className={`font-semibold ${
