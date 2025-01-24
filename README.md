@@ -7,7 +7,7 @@
 
 The **Travelling Postman** project is an advanced logistics system designed for **India Post**, aimed at revolutionizing mail and package delivery services. By leveraging cutting-edge technologies such as **Next.js**, **React.js**, **Python**, **PostgreSQL**, and **Machine Learning**, this system optimizes routing and improves efficiency across multiple transportation modes.
 
-## URL :https://travelling-postman-tmyxmr2in-rizvi-faiz-syeds-projects.vercel.app
+## URL :https://travelling-postman-gstcr9tnp-rizvi-faiz-syeds-projects.vercel.app
 
 ## Demo Video:
 ![Demo Video](/public/Recording%202024-12-16%20195437%20(1).gif)
