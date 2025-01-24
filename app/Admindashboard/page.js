@@ -120,7 +120,7 @@ const AdminDashboard = () => {
             if (elements.length > 0) {
               const index = elements[0].index;
               const selectedDispatcher = delayData[index];
-              // router.push(`/DispatcherMail?email=${selectedDispatcher.email}`);
+              router.push(`/DispatcherMail?email=${selectedDispatcher.email}`);
             }
           },
         },
