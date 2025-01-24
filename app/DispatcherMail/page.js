@@ -1,12 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
 
-// Dynamically import the component with SSR disabled
-const DispatcherMail = dynamic(() => import("./DispatcherMail"), {
-  ssr: false,
-});
 export default function DispatcherMail() {
   const [formData, setFormData] = useState({
     recipient: "",
@@ -14,8 +9,12 @@ export default function DispatcherMail() {
     message: "Hello Dispatcher, kindly inform about the reason of delay.",
   });
   const [responseMessage, setResponseMessage] = useState("");
-  const searchParams = useSearchParams();
-  const recipientEmail = searchParams.get("email"); // Get email from query params
+  const [recipientEmail, setRecipientEmail] = useState("");
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    setRecipientEmail(searchParams.get("email"));
+  }, []);
 
   useEffect(() => {
     if (recipientEmail) {
@@ -65,7 +64,6 @@ export default function DispatcherMail() {
               onChange={handleChange}
               required
               className="mt-1 w-full p-3 rounded-lg border border-gray-200 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500"
-              
             />
           </div>
           <div>
