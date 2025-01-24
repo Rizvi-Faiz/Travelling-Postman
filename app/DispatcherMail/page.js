@@ -1,7 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 
+// Dynamically import the component with SSR disabled
+const DispatcherMail = dynamic(() => import("./DispatcherMail"), {
+  ssr: false,
+});
 export default function DispatcherMail() {
   const [formData, setFormData] = useState({
     recipient: "",
